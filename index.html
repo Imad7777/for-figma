@@ -137,7 +137,7 @@
       color: var(--ink-tertiary);
       font-size: 1rem;
       cursor: pointer;
-      transition: transform 0.2s;
+      transition: color 0.2s, background 0.2s, transform 0.2s;
       border-radius: var(--radius-sm);
     }
     .sidebar-icon:hover { color: var(--ink-main); background: var(--bg-hover); transform: scale(1.05); }
@@ -164,44 +164,12 @@
       border: none;
       border-radius: var(--radius-sm);
       cursor: pointer;
-      transition: transform 0.15s;
+      transition: color 0.2s, background 0.2s, transform 0.15s;
       background: transparent;
     }
     .plat-btn:hover { color: var(--ink-main); background: var(--bg-hover); }
-    /* 每个平台按钮激活时使用该平台写死的颜色 */
-    .plat-btn[data-platform="tieba"].active-platform { color: var(--color-tieba); background: rgba(51,133,255,0.15); box-shadow: 0 2px 0 0 var(--color-tieba); }
-    .plat-btn[data-platform="weibo"].active-platform { color: var(--color-weibo); background: rgba(230,22,45,0.15); box-shadow: 0 2px 0 0 var(--color-weibo); }
-    .plat-btn[data-platform="zhihu"].active-platform { color: var(--color-zhihu); background: rgba(0,132,255,0.15); box-shadow: 0 2px 0 0 var(--color-zhihu); }
-    .plat-btn[data-platform="xiaohongshu"].active-platform { color: var(--color-xhs); background: rgba(255,36,66,0.15); box-shadow: 0 2px 0 0 var(--color-xhs); }
-    .plat-btn[data-platform="douyin"].active-platform { color: var(--color-douyin); background: rgba(139,92,246,0.15); box-shadow: 0 2px 0 0 var(--color-douyin); }
-    .plat-btn[data-platform="bilibili"].active-platform { color: var(--color-bilibili); background: rgba(251,114,153,0.15); box-shadow: 0 2px 0 0 var(--color-bilibili); }
+    .plat-btn.active-platform { color: var(--theme-color); background: var(--theme-glow); box-shadow: 0 2px 0 0 var(--theme-color); }
     .plat-btn:active { transform: scale(0.97); }
-    /* 顶栏、侧边栏随当前可见块写死显示，用 body 承载 data-current-platform */
-    body[data-current-platform="tieba"] #platform-name { color: var(--color-tieba); }
-    body[data-current-platform="weibo"] #platform-name { color: var(--color-weibo); }
-    body[data-current-platform="zhihu"] #platform-name { color: var(--color-zhihu); }
-    body[data-current-platform="xiaohongshu"] #platform-name { color: var(--color-xhs); }
-    body[data-current-platform="douyin"] #platform-name { color: var(--color-douyin); }
-    body[data-current-platform="bilibili"] #platform-name { color: var(--color-bilibili); }
-    body[data-current-platform="tieba"] #val-nodes { color: var(--color-tieba); }
-    body[data-current-platform="weibo"] #val-nodes { color: var(--color-weibo); }
-    body[data-current-platform="zhihu"] #val-nodes { color: var(--color-zhihu); }
-    body[data-current-platform="xiaohongshu"] #val-nodes { color: var(--color-xhs); }
-    body[data-current-platform="douyin"] #val-nodes { color: var(--color-douyin); }
-    body[data-current-platform="bilibili"] #val-nodes { color: var(--color-bilibili); }
-    body[data-current-platform="tieba"] .sidebar .sidebar-icon.active { color: var(--color-tieba); background: rgba(51,133,255,0.15); }
-    body[data-current-platform="tieba"] .sidebar .sidebar-icon.active::before { background: var(--color-tieba); }
-    body[data-current-platform="weibo"] .sidebar .sidebar-icon.active { color: var(--color-weibo); background: rgba(230,22,45,0.15); }
-    body[data-current-platform="weibo"] .sidebar .sidebar-icon.active::before { background: var(--color-weibo); }
-    body[data-current-platform="zhihu"] .sidebar .sidebar-icon.active { color: var(--color-zhihu); background: rgba(0,132,255,0.15); }
-    body[data-current-platform="zhihu"] .sidebar .sidebar-icon.active::before { background: var(--color-zhihu); }
-    body[data-current-platform="xiaohongshu"] .sidebar .sidebar-icon.active { color: var(--color-xhs); background: rgba(255,36,66,0.15); }
-    body[data-current-platform="xiaohongshu"] .sidebar .sidebar-icon.active::before { background: var(--color-xhs); }
-    body[data-current-platform="douyin"] .sidebar .sidebar-icon.active { color: var(--color-douyin); background: rgba(139,92,246,0.15); }
-    body[data-current-platform="douyin"] .sidebar .sidebar-icon.active::before { background: var(--color-douyin); }
-    body[data-current-platform="bilibili"] .sidebar .sidebar-icon.active { color: var(--color-bilibili); background: rgba(251,114,153,0.15); }
-    body[data-current-platform="bilibili"] .sidebar .sidebar-icon.active::before { background: var(--color-bilibili); }
-
     .dark-toggle {
       width: 36px;
       height: 36px;
@@ -664,119 +632,13 @@
     .module.active { display: block; animation: moduleFadeIn 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards; }
     @keyframes moduleFadeIn { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
 
-    /* ========== 打通成一整页：18 块从上往下连续排列，原生滚动 ========== */
-    .main-scroll {
-      position: absolute;
-      top: 56px;
-      bottom: 0;
-      left: 56px;
-      right: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      z-index: 10;
-      scrollbar-width: thin;
-    }
-    .main-scroll::-webkit-scrollbar { width: 8px; }
-    .main-scroll::-webkit-scrollbar-track { background: transparent; }
-    .main-scroll::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
-    .flow-block {
-      min-height: calc(100vh - 56px);
-      width: 100%;
-      position: relative;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: row;
-      align-items: stretch;
-      justify-content: space-between;
-      gap: 28px;
-    }
-    .flow-block.block-simulation {
-      padding: 28px 32px 28px 28px;
-      gap: 28px;
-    }
-    .flow-block.block-agents,
-    .flow-block.block-analytics {
-      padding: 28px 40px 60px;
-      flex-direction: column;
-      justify-content: flex-start;
-    }
-    .flow-block .stage-wrap {
-      flex: 1 1 0;
-      min-width: 280px;
-      min-height: 400px;
-    }
-    .flow-block .block-panels {
-      width: 438px;
-      max-width: 100%;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-    .flow-block .stage-wrap {
-      position: relative !important;
-      top: auto !important; left: auto !important; right: auto !important; bottom: auto !important;
-    }
-    .flow-block .stage-wrap .scroll-body { height: calc(100% - 52px); min-height: 280px; }
-
-    /* 每个块写死自己平台的颜色，滚到即显示，无切换逻辑 */
-    /* 用显式 hex/rgba 覆盖，便于 htmltodesign 等插件正确导出多色设计稿到 Figma */
-    .flow-block[data-platform="tieba"] { --theme-color: #3385ff; --theme-glow: rgba(51,133,255,0.22); --theme-color-dark: #2563eb; }
-    .flow-block[data-platform="tieba"] .chart-panel .section-title { border-left-color: #3385ff; }
-    .flow-block[data-platform="tieba"] .section-icon-theme { color: #2563eb; }
-    .flow-block[data-platform="tieba"] .kpi-accent,
-    .flow-block[data-platform="tieba"] .agent-tag { color: #3385ff; background: rgba(51,133,255,0.15); }
-    .flow-block[data-platform="tieba"] #rounds-val,
-    .flow-block[data-platform="tieba"] .sync-rounds-val { color: #3385ff !important; }
-    .flow-block[data-platform="tieba"] #bar-sim,
-    .flow-block[data-platform="tieba"] .sync-bar-sim { background-color: #3385ff !important; }
-    .flow-block[data-platform="tieba"] .analytics-content .mb-6 span:first-child { color: #3385ff !important; }
-
-    .flow-block[data-platform="weibo"] { --theme-color: #e6162d; --theme-glow: rgba(230,22,45,0.22); --theme-color-dark: #ac1021; }
-    .flow-block[data-platform="weibo"] .section-icon-theme { color: #ac1021; }
-    .flow-block[data-platform="weibo"] .chart-panel .section-title { border-left-color: #e6162d; }
-    .flow-block[data-platform="weibo"] .kpi-accent,
-    .flow-block[data-platform="weibo"] .agent-tag { color: #e6162d; background: rgba(230,22,45,0.15); }
-    .flow-block[data-platform="weibo"] .sync-rounds-val { color: #e6162d !important; }
-    .flow-block[data-platform="weibo"] .sync-bar-sim { background-color: #e6162d !important; }
-    .flow-block[data-platform="weibo"] .analytics-content .mb-6 span:first-child { color: #e6162d !important; }
-
-    .flow-block[data-platform="zhihu"] { --theme-color: #0084ff; --theme-glow: rgba(0,132,255,0.22); --theme-color-dark: #0063bf; }
-    .flow-block[data-platform="zhihu"] .section-icon-theme { color: #0063bf; }
-    .flow-block[data-platform="zhihu"] .chart-panel .section-title { border-left-color: #0084ff; }
-    .flow-block[data-platform="zhihu"] .kpi-accent,
-    .flow-block[data-platform="zhihu"] .agent-tag { color: #0084ff; background: rgba(0,132,255,0.15); }
-    .flow-block[data-platform="zhihu"] .sync-rounds-val { color: #0084ff !important; }
-    .flow-block[data-platform="zhihu"] .sync-bar-sim { background-color: #0084ff !important; }
-    .flow-block[data-platform="zhihu"] .analytics-content .mb-6 span:first-child { color: #0084ff !important; }
-
-    .flow-block[data-platform="xiaohongshu"] { --theme-color: #ff2442; --theme-glow: rgba(255,36,66,0.22); --theme-color-dark: #bf1b31; }
-    .flow-block[data-platform="xiaohongshu"] .section-icon-theme { color: #bf1b31; }
-    .flow-block[data-platform="xiaohongshu"] .chart-panel .section-title { border-left-color: #ff2442; }
-    .flow-block[data-platform="xiaohongshu"] .kpi-accent,
-    .flow-block[data-platform="xiaohongshu"] .agent-tag { color: #ff2442; background: rgba(255,36,66,0.15); }
-    .flow-block[data-platform="xiaohongshu"] .sync-rounds-val { color: #ff2442 !important; }
-    .flow-block[data-platform="xiaohongshu"] .sync-bar-sim { background-color: #ff2442 !important; }
-    .flow-block[data-platform="xiaohongshu"] .analytics-content .mb-6 span:first-child { color: #ff2442 !important; }
-
-    .flow-block[data-platform="douyin"] { --theme-color: #8b5cf6; --theme-glow: rgba(139,92,246,0.22); --theme-color-dark: #6845b8; }
-    .flow-block[data-platform="douyin"] .section-icon-theme { color: #6845b8; }
-    .flow-block[data-platform="douyin"] .chart-panel .section-title { border-left-color: #8b5cf6; }
-    .flow-block[data-platform="douyin"] .kpi-accent,
-    .flow-block[data-platform="douyin"] .agent-tag { color: #8b5cf6; background: rgba(139,92,246,0.15); }
-    .flow-block[data-platform="douyin"] .sync-rounds-val { color: #8b5cf6 !important; }
-    .flow-block[data-platform="douyin"] .sync-bar-sim { background-color: #8b5cf6 !important; }
-    .flow-block[data-platform="douyin"] .analytics-content .mb-6 span:first-child { color: #8b5cf6 !important; }
-
-    .flow-block[data-platform="bilibili"] { --theme-color: #fb7299; --theme-glow: rgba(251,114,153,0.22); --theme-color-dark: #bc5572; }
-    .flow-block[data-platform="bilibili"] .section-icon-theme { color: #bc5572; }
-    .flow-block[data-platform="bilibili"] .chart-panel .section-title { border-left-color: #fb7299; }
-    .flow-block[data-platform="bilibili"] .kpi-accent,
-    .flow-block[data-platform="bilibili"] .agent-tag { color: #fb7299; background: rgba(251,114,153,0.15); }
-    .flow-block[data-platform="bilibili"] .sync-rounds-val { color: #fb7299 !important; }
-    .flow-block[data-platform="bilibili"] .sync-bar-sim { background-color: #fb7299 !important; }
-    .flow-block[data-platform="bilibili"] .analytics-content .mb-6 span:first-child { color: #fb7299 !important; }
+    /* 全屏模式：受众图鉴、全息图谱覆盖整页，无卷轴（参考 13 copy） */
+    body.mode-full .stage-wrap { display: none !important; }
+    body.mode-full #module-simulation { display: none !important; } /* 2、3 页不显示推演参数与情感指标 */
+    body.mode-full .content-wrapper { justify-content: stretch; }
+    body.mode-full .content-rail { max-width: none !important; width: 100% !important; }
+    body.mode-full #module-agents.active { display: flex !important; width: 100%; }
+    body.mode-full #module-analytics.active { display: block !important; width: 100%; overflow-y: auto; padding-right: 16px; padding-bottom: 60px; height: 100%; }
 
     .chart-container { width: 100%; height: 100%; min-height: 250px; }
     .chart-box { width: 100%; height: 380px; }
@@ -1076,9 +938,10 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* 首页右侧三块面板：标题图标随平台主题色，稍深一点；滚动切换时直接显示，无变色动效 */
+    /* 首页右侧三块面板：标题图标随平台主题色，稍深一点 */
     .section-icon-theme {
       color: var(--theme-color-dark);
+      transition: color 0.5s ease;
     }
     /* 首页右侧三块面板：与图表面板统一的悬浮动效（随平台主题色） */
     #module-simulation .hud-panel {
@@ -1169,140 +1032,65 @@
     .report-modal .modal-close:hover { background: var(--bg-hover); color: var(--ink-main); }
   </style>
 </head>
-<body data-current-platform="tieba">
+<body>
 
   <!-- 水墨动态背景 -->
   <div id="ink-canvas-container">
     <canvas id="ink-canvas"></canvas>
   </div>
 
-  <!-- 打通成一整页：18 块从上往下连续排列，原生滚动 -->
-  <main class="main-scroll" id="main-scroll">
-    <!-- 块 0: 贴吧·推演沙盘（唯一带交互控件的 simulation） -->
-    <div class="flow-block block-simulation" data-idx="0" data-platform="tieba" data-module="simulation">
-      <div class="stage-wrap" style="position:relative;top:0;left:0;right:0;bottom:0;">
-        <div class="scroll-stage">
-          <div class="scroll">
-            <div class="scroll-axis scroll-axis-left"></div>
-            <div class="scroll-axis scroll-axis-right"></div>
-            <div class="scroll-paper">
-              <div class="scroll-header">
-                <div class="scroll-title"><span class="seal">章</span><span>推演紀要 · 卷</span></div>
-                <div class="scroll-sub">
-                  <span id="scroll-platform" class="chip"><i class="fas fa-feather-alt"></i> 贴吧</span>
-                  <span id="scroll-model" class="chip"><i class="fas fa-brain"></i> DeepSeek</span>
-                  <span id="scroll-rounds" class="chip"><i class="fas fa-layer-group"></i> 10 帖</span>
-                </div>
+  <!-- 首页 · 卷轴舞台（左侧） -->
+  <div class="stage-wrap">
+    <div class="scroll-stage">
+      <div class="scroll">
+        <div class="scroll-axis scroll-axis-left"></div>
+        <div class="scroll-axis scroll-axis-right"></div>
+        <div class="scroll-paper">
+          <div class="scroll-header">
+            <div class="scroll-title">
+              <span class="seal">章</span>
+              <span>推演紀要 · 卷</span>
+            </div>
+            <div class="scroll-sub">
+              <span id="scroll-platform" class="chip"><i class="fas fa-feather-alt"></i> 贴吧</span>
+              <span id="scroll-model" class="chip"><i class="fas fa-brain"></i> DeepSeek</span>
+              <span id="scroll-rounds" class="chip"><i class="fas fa-layer-group"></i> 10 帖</span>
+            </div>
+          </div>
+          <div class="scroll-body scrollbar-ink" id="scroll-body">
+            <div class="post-card ink-in" id="post-card">
+              <span class="seal-corner seal-corner-tr">推</span>
+              <div class="post-meta">
+                <span class="chip"><i class="fas fa-compass"></i> 话题</span>
+                <span class="chip" id="post-topic-chip">非遗数字化传承与现代重构</span>
+                <span class="chip"><i class="fas fa-hourglass-half"></i> 状态</span>
+                <span class="chip" id="post-status-chip" style="color: var(--ink-light);">静候指令</span>
               </div>
-              <div class="scroll-body scrollbar-ink" id="scroll-body">
-                <div class="post-card ink-in" id="post-card">
-                  <span class="seal-corner seal-corner-tr">推</span>
-                  <div class="post-meta">
-                    <span class="chip"><i class="fas fa-compass"></i> 话题</span>
-                    <span class="chip" id="post-topic-chip">非遗数字化传承与现代重构</span>
-                    <span class="chip"><i class="fas fa-hourglass-half"></i> 状态</span>
-                    <span class="chip" id="post-status-chip" style="color: var(--ink-light);">静候指令</span>
-                  </div>
-                  <div class="post-title" id="post-title">标题：非遗数字化，是“活化”还是“消解”？</div>
-                  <div class="post-content" id="post-content">正文：当传统技艺被短视频与AIGC重新编排，受众的认同与抵触会如何分化？欢迎从“传承价值、审美体验、商业边界”三条线索展开讨论。</div>
-                  <div class="post-actions" id="post-actions"></div>
-                </div>
-                <div class="round-divider" id="hint-divider" title="推演状态">
-                  <span class="seal-corner seal-corner-bl">卷</span>
-                  <span id="hint-divider-text">未开卷 · 待落墨</span>
-                </div>
-                <div id="page-nav" class="page-nav hidden">
-                  <button type="button" id="btn-page-prev" class="page-nav-btn" title="上一帖"><i class="fas fa-chevron-left"></i></button>
-                  <span id="page-info" class="page-info">第 1 帖 / 共 1 帖</span>
-                  <button type="button" id="btn-page-next" class="page-nav-btn" title="下一帖"><i class="fas fa-chevron-right"></i></button>
-                </div>
-                <div class="thread" id="thread"></div>
-                <div class="to-bottom" id="btn-to-bottom">
-                  <button type="button"><i class="fas fa-arrow-down mr-2"></i>回到底部</button>
-                </div>
-              </div>
+              <div class="post-title" id="post-title">标题：非遗数字化，是“活化”还是“消解”？</div>
+              <div class="post-content" id="post-content">正文：当传统技艺被短视频与AIGC重新编排，受众的认同与抵触会如何分化？欢迎从“传承价值、审美体验、商业边界”三条线索展开讨论。</div>
+              <div class="post-actions" id="post-actions"></div>
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="block-panels">
-        <div class="hud-panel p-6 shrink-0">
-          <h3 class="section-title title-font text-[16px] mb-5 pb-3" style="color: var(--ink-main);">
-            <span class="section-label-vertical">參</span><i class="fas fa-cogs mr-2 section-icon-theme"></i>推演参数设定<span class="seal seal-inline">設</span>
-          </h3>
-          <div class="space-y-5">
-            <div>
-              <label class="block text-[13px] font-bold" style="color: var(--ink-light);">演化话题 (Topic)</label>
-              <input type="text" id="ctrl-topic" value="非遗数字化传承与现代重构" placeholder="请输入你要推演的话题...">
-            </div>
-            <div id="discussion-row" class="hidden"><label class="block text-[13px] font-bold" style="color: var(--ink-light);">讨论内容</label><input type="text" id="ctrl-discussion" placeholder="请输入讨论内容..."></div>
-            <div>
-              <label class="block text-[13px] font-bold" style="color: var(--ink-light);">承载大模型 (LLM Backend)</label>
-              <select id="ctrl-model"><option value="qwen">通义千问</option><option value="doubao">火山方舟</option><option value="deepseek" selected>DeepSeek</option></select>
-            </div>
-            <div>
-              <div class="flex justify-between text-[13px] font-bold" style="color: var(--ink-light);"><label>推演帖子数 (Posts)</label><span id="rounds-val" style="color: var(--theme-color)">10 帖</span></div>
-              <div class="range-wrap mt-3"><input type="range" id="ctrl-rounds" min="1" max="50" value="10" class="range-ink"><div class="range-ticks" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <button id="btn-start" class="btn-primary"><i class="fas fa-play mr-2"></i>开启推演</button>
-              <button id="btn-stop" class="btn-danger" disabled><i class="fas fa-hand mr-2"></i>终止推演</button>
-            </div>
-          </div>
-        </div>
-        <div class="hud-panel p-6 shrink-0" style="position:relative;">
-          <h3 class="section-title title-font text-[16px] mb-5 pb-3" style="color: var(--ink-main);">
-            <span class="section-label-vertical">究</span><i class="fas fa-check-double mr-2 section-icon-theme"></i>推演真实性考究<span class="seal seal-inline">似</span>
-          </h3>
-          <div class="space-y-4">
-            <div><div class="flex justify-between text-[13px] title-font" style="color: var(--ink-main);"><span>评论语义相似度 (Sim)</span><span class="font-bold font-sans" id="metric-sim">0.00</span></div><div class="h-[6px] bg-[rgba(0,0,0,0.06)] rounded overflow-hidden mt-2"><div class="h-full" id="bar-sim" style="width:0%; background: var(--theme-color); transition: width 0.5s ease-out;"></div></div></div>
-            <div><div class="flex justify-between text-[13px] title-font" style="color: var(--ink-main);"><span>风格一致性 (Style)</span><span class="font-bold font-sans" id="metric-style">0.0%</span></div><div class="h-[6px] bg-[rgba(0,0,0,0.06)] rounded overflow-hidden mt-2"><div class="h-full" id="bar-style" style="width:0%; background: var(--color-weibo); transition: width 0.5s ease-out;"></div></div></div>
-          </div>
-        </div>
-        <div class="hud-panel p-6 flex-1 min-h-0 flex flex-col overflow-hidden report-panel">
-          <h3 class="section-title title-font text-[16px] mb-5 pb-3 shrink-0 flex items-center justify-between gap-2" style="color: var(--ink-main);">
-            <span><span class="section-label-vertical">議</span><i class="fas fa-scroll mr-2 section-icon-theme"></i>推演建议<span class="seal seal-inline">報</span></span>
-            <button type="button" id="btn-download-report" class="text-[12px] px-2 py-1 rounded border border-[rgba(0,0,0,0.12)] hover:border-[var(--theme-color)] transition-colors shrink-0" title="下载报告"><i class="fas fa-download mr-1"></i>下载</button>
-          </h3>
-          <div id="report-area" class="flex-1 overflow-y-auto scrollbar-ink text-[13px] leading-relaxed cursor-pointer report-click-expand" style="color: var(--ink-light); min-height: 60px;" title="点击放大查看全文">
-            <p class="report-placeholder" id="report-placeholder"><span class="report-empty-icon"><i class="fas fa-file-alt"></i></span>推演完成后，将根据多智能体讨论结果生成策略建议。<br><span class="text-[11px] opacity-70">（点击此处可放大查看）</span></p>
-            <div id="report-content" class="hidden"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- 块 1: 贴吧·受众图鉴 -->
-    <div class="flow-block block-agents" data-idx="1" data-platform="tieba" data-module="agents">
-      <div class="w-full">
-        <div class="hud-panel p-8 flex-1 overflow-y-auto scrollbar-ink min-h-0 agents-panel">
-          <h3 class="section-title title-font text-[22px] mb-8 pb-4" style="color: var(--ink-main);"><span class="section-label-vertical">錄</span><i class="fas fa-users mr-3 section-icon-theme"></i>多智能体画像录<span class="seal seal-inline">錄</span></h3>
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-8" id="agentsGrid"></div>
-        </div>
-      </div>
-    </div>
-    <!-- 块 2: 贴吧·全息图谱 -->
-    <div class="flow-block block-analytics" data-idx="2" data-platform="tieba" data-module="analytics">
-      <div class="w-full analytics-content">
-        <div class="mb-6 title-font text-xl font-bold flex items-center gap-3" style="color: var(--ink-main);"><span style="color: var(--theme-color);">全息</span><span>推演数据图谱</span><span class="seal seal-inline" style="margin-left: 4px;">譜</span></div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 kpi-grid">
-          <div class="kpi-card"><div class="text-xs title-font mb-2" style="color: var(--ink-light);">训练集 MAE (内测)</div><div class="text-2xl font-bold font-sans" style="color: var(--ink-main);">12.34 <span class="text-sm ml-1 font-medium kpi-accent"><i class="fas fa-arrow-down"></i> 2.1%</span></div></div>
-          <div class="kpi-card"><div class="text-xs title-font mb-2" style="color: var(--ink-light);">测试集 MAE (盲测)</div><div class="text-2xl font-bold font-sans" style="color: var(--ink-main);">15.71 <span class="text-sm ml-1 font-medium kpi-accent"><i class="fas fa-arrow-down"></i> 1.5%</span></div></div>
-          <div class="kpi-card"><div class="text-xs title-font mb-2" style="color: var(--ink-light);">R² Score (拟合优度)</div><div class="text-2xl font-bold font-sans" style="color: var(--ink-main);">0.885</div></div>
-        </div>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <div class="hud-panel p-6 chart-panel"><h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2"><i class="fas fa-signal mr-2 section-icon-theme"></i>特征重要性 (RF)</h3><div id="chart-rf" class="chart-box bamboo-chart" data-chart="rf"></div><div class="chart-conclusion">语义分析是核心驱动力，文本语义与表达风格对受众分类贡献最大；观点、复杂度与行为特征可作为辅助研判依据。</div></div>
-          <div class="hud-panel p-6 chart-panel"><h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2"><i class="fas fa-chart-bar mr-2 section-icon-theme"></i>核心能力分布 (Faction Radar)</h3><div id="chart-radar" class="chart-box" data-chart="radar"></div><div class="chart-conclusion">极化程度与裂变率较高，情绪强度突出，互动深度与商业转化仍有提升空间。</div></div>
-          <div class="hud-panel p-6 chart-panel"><h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2"><i class="fas fa-dot-circle mr-2 section-icon-theme"></i>内测集验证</h3><div id="chart-val1" class="chart-box" data-chart="val1"></div><div class="chart-conclusion">内测集真实域与推演域拟合良好，模型在训练数据上表现稳定。</div></div>
-          <div class="hud-panel p-6 chart-panel"><h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2"><i class="fas fa-gem mr-2 section-icon-theme"></i>盲测集验证</h3><div id="chart-val2" class="chart-box" data-chart="val2"></div><div class="chart-conclusion">盲测集验证显示模型具备一定泛化能力，部分样本存在偏差，可进一步优化。</div></div>
-        </div>
-        <div class="hud-panel p-6 mb-10 chart-panel"><h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2"><i class="fas fa-th mr-2 section-icon-theme"></i>派系情感热力图 (Emotion Field)</h3><div id="chart-heat" class="chart-box" data-chart="heat" style="height: 400px;"></div><div class="chart-conclusion">不同派系对各类文化形态的情感强度存在明显差异，原教旨与大众在茶道、汉服等维度表现突出。</div></div>
-      </div>
-    </div>
-    <!-- 块 3–17：其余 15 块（微博×3 → 知乎×3 → 小红书×3 → 抖音×3 → B站×3）用 JS 生成 -->
-    <div id="flow-blocks-append"></div>
-  </main>
 
-  <!-- 左侧导航 -->
+            <div class="round-divider" id="hint-divider" title="推演状态">
+              <span class="seal-corner seal-corner-bl">卷</span>
+              <span id="hint-divider-text">未开卷 · 待落墨</span>
+            </div>
+            <div id="page-nav" class="page-nav hidden">
+              <button type="button" id="btn-page-prev" class="page-nav-btn" title="上一帖"><i class="fas fa-chevron-left"></i></button>
+              <span id="page-info" class="page-info">第 1 帖 / 共 1 帖</span>
+              <button type="button" id="btn-page-next" class="page-nav-btn" title="下一帖"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="thread" id="thread"></div>
+            <div class="to-bottom" id="btn-to-bottom">
+              <button type="button"><i class="fas fa-arrow-down mr-2"></i>回到底部</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 左侧导航（3、4、5 已合并为「全息图谱」） -->
   <div class="sidebar">
     <div class="font-semibold text-lg mb-6" style="color: var(--theme-color);">⋮</div>
     <div class="sidebar-icon active" data-module="simulation" title="推演沙盘"><i class="fas fa-sliders-h"></i></div>
@@ -1310,11 +1098,11 @@
     <div class="sidebar-icon" data-module="analytics" title="全息图谱"><i class="fas fa-project-diagram"></i></div>
   </div>
 
-  <div id="top-bar-wrapper" class="ml-[56px] h-full flex flex-col relative z-20 pointer-events-none" data-current-platform="tieba">
+  <div class="ml-[56px] h-full flex flex-col relative z-20 pointer-events-none">
     <div class="top-bar pointer-events-auto">
       <div class="flex items-center gap-6">
         <span class="title-font text-lg tracking-widest font-bold" style="color: var(--ink-main);">
-          文化受众 · <span style="color: var(--theme-color);" id="platform-name">天机矩阵</span>
+          文化受众 · <span style="color: var(--theme-color); transition: color 0.5s;" id="platform-name">天机矩阵</span>
         </span>
         <div class="flex gap-2" id="platform-switches">
           <button class="plat-btn active-platform" data-platform="tieba" data-color="var(--color-tieba)" data-name="贴吧">贴吧</button>
@@ -1327,7 +1115,7 @@
       </div>
       <div class="flex items-center gap-8">
         <div class="flex gap-8 text-sm font-bold title-font" style="color: var(--ink-light);">
-          <div>话题气脉: <span style="color: var(--theme-color); font-size: 1.2rem;" id="val-nodes">12,049</span></div>
+          <div>话题气脉: <span style="color: var(--theme-color); font-size: 1.2rem; transition: color 0.5s;" id="val-nodes">12,049</span></div>
           <div>引擎状态: <span style="color: #52c41a;"><i class="fas fa-plug"></i> 灵台已连</span></div>
         </div>
         <button type="button" id="dark-mode-toggle" class="dark-toggle" title="切换暗色模式">
@@ -1336,6 +1124,189 @@
       </div>
     </div>
 
+    <!-- 【【【首页尺寸可改 10/12】】】右侧面板：下方 div 的 max-w-[420px] 改数字可调面板宽度；上方 div 的 p-8 改 p-6/p-10 等可调整体内边距 -->
+    <div class="flex-1 p-8 flex justify-end min-h-0 content-wrapper" style="pointer-events: none;">
+      <div class="w-full max-w-[438px] h-full flex flex-col gap-6 right-rail scrollbar-ink min-h-0 content-rail pointer-events-auto">
+
+        <!-- SECTION: 首页 · 推演参数设定（右侧顶部面板） -->
+        <div id="module-simulation" class="module active h-full flex flex-col gap-6">
+
+          <!-- 【【【首页尺寸可改 11/12】】】推演参数面板：p-6=内边距，text-[16px]=标题字号 -->
+          <div class="hud-panel p-6 shrink-0">
+            <h3 class="section-title title-font text-[16px] mb-5 pb-3" style="color: var(--ink-main);">
+              <span class="section-label-vertical">參</span>
+              <i class="fas fa-cogs mr-2 section-icon-theme"></i>推演参数设定
+              <span class="seal seal-inline">設</span>
+            </h3>
+
+            <div class="space-y-5">
+              <div>
+                <label class="block text-[13px] font-bold" style="color: var(--ink-light);">演化话题 (Topic)</label>
+                <input type="text" id="ctrl-topic" value="非遗数字化传承与现代重构" placeholder="请输入你要推演的话题...">
+              </div>
+
+              <div id="discussion-row" class="hidden"><!-- 仅当删除预设、自己输入话题后显示 -->
+                <label class="block text-[13px] font-bold" style="color: var(--ink-light);">讨论内容</label>
+                <input type="text" id="ctrl-discussion" placeholder="请输入讨论内容...">
+              </div>
+
+              <div>
+                <label class="block text-[13px] font-bold" style="color: var(--ink-light);">承载大模型 (LLM Backend)</label>
+                <select id="ctrl-model">
+                  <option value="qwen">通义千问 </option>
+                  <option value="doubao">火山方舟 </option>
+                  <option value="deepseek" selected>DeepSeek </option>
+                </select>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-[13px] font-bold" style="color: var(--ink-light);">
+                  <label>推演帖子数 (Posts)</label>
+                  <span id="rounds-val" style="color: var(--theme-color)">10 帖</span>
+                </div>
+                <div class="range-wrap mt-3">
+                  <input type="range" id="ctrl-rounds" min="1" max="50" value="10" class="range-ink">
+                  <div class="range-ticks" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <button id="btn-start" class="btn-primary"><i class="fas fa-play mr-2"></i>开启推演</button>
+                <button id="btn-stop" class="btn-danger" disabled><i class="fas fa-hand mr-2"></i>终止推演</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 【【【首页尺寸可改 11/12】】】推演真实性考究面板 -->
+          <div class="hud-panel p-6 shrink-0" style="position:relative;">
+            <h3 class="section-title title-font text-[16px] mb-5 pb-3" style="color: var(--ink-main);">
+              <span class="section-label-vertical">究</span>
+              <i class="fas fa-check-double mr-2 section-icon-theme"></i>推演真实性考究
+              <span class="seal seal-inline">似</span>
+            </h3>
+            <div class="space-y-4">
+              <div>
+                <div class="flex justify-between text-[13px] title-font" style="color: var(--ink-main);">
+                  <span>评论语义相似度 (Sim)</span>
+                  <span class="font-bold font-sans" id="metric-sim">0.00</span>
+                </div>
+                <div class="h-[6px] bg-[rgba(0,0,0,0.06)] rounded overflow-hidden mt-2">
+                  <div class="h-full" id="bar-sim" style="width:0%; background: var(--theme-color); transition: width 0.5s ease-out;"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-[13px] title-font" style="color: var(--ink-main);">
+                  <span>风格一致性 (Style)</span>
+                  <span class="font-bold font-sans" id="metric-style">0.0%</span>
+                </div>
+                <div class="h-[6px] bg-[rgba(0,0,0,0.06)] rounded overflow-hidden mt-2">
+                  <div class="h-full" id="bar-style" style="width:0%; background: var(--color-weibo); transition: width 0.5s ease-out;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 【【【首页尺寸可改 12/12】】】推演建议面板 -->
+          <div class="hud-panel p-6 flex-1 min-h-0 flex flex-col overflow-hidden report-panel">
+            <h3 class="section-title title-font text-[16px] mb-5 pb-3 shrink-0 flex items-center justify-between gap-2" style="color: var(--ink-main);">
+              <span><span class="section-label-vertical">議</span><i class="fas fa-scroll mr-2 section-icon-theme"></i>推演建议<span class="seal seal-inline">報</span></span>
+              <button type="button" id="btn-download-report" class="text-[12px] px-2 py-1 rounded border border-[rgba(0,0,0,0.12)] hover:border-[var(--theme-color)] transition-colors shrink-0" title="下载报告"><i class="fas fa-download mr-1"></i>下载</button>
+            </h3>
+            <!-- report-area：与推演参数设定一致，正文 text-[13px] -->
+            <div id="report-area" class="flex-1 overflow-y-auto scrollbar-ink text-[13px] leading-relaxed cursor-pointer report-click-expand" style="color: var(--ink-light); min-height: 60px; pointer-events: auto;" title="点击放大查看全文">
+              <p class="report-placeholder" id="report-placeholder">
+                <span class="report-empty-icon"><i class="fas fa-file-alt"></i></span>
+                推演完成后，将根据多智能体讨论结果生成策略建议。
+                <br><span class="text-[11px] opacity-70">（点击此处可放大查看）</span>
+              </p>
+              <div id="report-content" class="hidden"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION: 受众画像录模块（全屏时覆盖整页，画卷展开入场） -->
+        <div id="module-agents" class="module h-full overflow-y-auto scrollbar-ink min-h-0 agents-page">
+          <div id="agents-content" class="agents-content analytics-animate">
+          <div class="hud-panel p-8 flex-1 overflow-y-auto scrollbar-ink min-h-0 agents-panel">
+            <h3 class="section-title title-font text-[22px] mb-8 pb-4" style="color: var(--ink-main);">
+              <span class="section-label-vertical">錄</span>
+              <i class="fas fa-users mr-3 section-icon-theme"></i>多智能体画像录
+              <span class="seal seal-inline">錄</span>
+            </h3>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-8" id="agentsGrid"></div>
+          </div>
+          </div>
+        </div>
+
+        <!-- SECTION: 全息图谱（全屏时覆盖整页，画卷展开入场） -->
+        <div id="module-analytics" class="module h-full overflow-y-auto scrollbar-ink min-h-0">
+          <div id="analytics-content" class="analytics-content analytics-animate">
+          <div class="mb-6 title-font text-xl font-bold flex items-center gap-3" style="color: var(--ink-main); position: relative;">
+            <span style="color: var(--theme-color);">全息</span>
+            <span>推演数据图谱</span>
+            <span class="seal seal-inline" style="margin-left: 4px;">譜</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 kpi-grid">
+            <div class="kpi-card">
+              <div class="text-xs title-font mb-2" style="color: var(--ink-light);">训练集 MAE (内测)</div>
+              <div class="text-2xl font-bold font-sans" style="color: var(--ink-main);">12.34 <span class="text-sm ml-1 font-medium kpi-accent"><i class="fas fa-arrow-down"></i> 2.1%</span></div>
+            </div>
+            <div class="kpi-card">
+              <div class="text-xs title-font mb-2" style="color: var(--ink-light);">测试集 MAE (盲测)</div>
+              <div class="text-2xl font-bold font-sans" style="color: var(--ink-main);">15.71 <span class="text-sm ml-1 font-medium kpi-accent"><i class="fas fa-arrow-down"></i> 1.5%</span></div>
+            </div>
+            <div class="kpi-card">
+              <div class="text-xs title-font mb-2" style="color: var(--ink-light);">R² Score (拟合优度)</div>
+              <div class="text-2xl font-bold font-sans" style="color: var(--ink-main);">0.885</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="hud-panel p-6 chart-panel">
+              <h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2">
+                <i class="fas fa-signal mr-2 section-icon-theme"></i>特征重要性 (RF)
+              </h3>
+              <div id="chart-rf" class="chart-box bamboo-chart"></div>
+              <div class="chart-conclusion">语义分析是核心驱动力，文本语义与表达风格对受众分类贡献最大；观点、复杂度与行为特征可作为辅助研判依据。</div>
+            </div>
+            <div class="hud-panel p-6 chart-panel">
+              <h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2">
+                <i class="fas fa-chart-bar mr-2 section-icon-theme"></i>核心能力分布 (Faction Radar)
+              </h3>
+              <div id="chart-radar" class="chart-box"></div>
+              <div class="chart-conclusion">极化程度与裂变率较高，情绪强度突出，互动深度与商业转化仍有提升空间。</div>
+            </div>
+            <div class="hud-panel p-6 chart-panel">
+              <h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2">
+                <i class="fas fa-dot-circle mr-2 section-icon-theme"></i>内测集验证
+              </h3>
+              <div id="chart-val1" class="chart-box"></div>
+              <div class="chart-conclusion">内测集真实域与推演域拟合良好，模型在训练数据上表现稳定。</div>
+            </div>
+            <div class="hud-panel p-6 chart-panel">
+              <h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2">
+                <i class="fas fa-gem mr-2 section-icon-theme"></i>盲测集验证
+              </h3>
+              <div id="chart-val2" class="chart-box"></div>
+              <div class="chart-conclusion">盲测集验证显示模型具备一定泛化能力，部分样本存在偏差，可进一步优化。</div>
+            </div>
+          </div>
+
+          <div class="hud-panel p-6 mb-10 chart-panel">
+            <h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2">
+              <i class="fas fa-th mr-2 section-icon-theme"></i>派系情感热力图 (Emotion Field)
+            </h3>
+            <div id="chart-heat" class="chart-box" style="height: 400px;"></div>
+            <div class="chart-conclusion">不同派系对各类文化形态的情感强度存在明显差异，原教旨与大众在茶道、汉服等维度表现突出。</div>
+          </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
 
   <!-- 推演建议放大弹窗 -->
@@ -1469,7 +1440,77 @@
     // 平台切换（主题色 + 左侧卷轴chip）
     // ============================================================
     const platformBtns = document.querySelectorAll('.plat-btn');
-    // 平台按钮点击改为滚动到对应平台首块（由下方 18 块滚轮逻辑统一处理）
+    platformBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        platformBtns.forEach(b => b.classList.remove('active-platform'));
+        btn.classList.add('active-platform');
+
+        const varName = btn.dataset.color.replace('var(', '').replace(')', '').trim();
+        const hexColor = btn.dataset.color.match(/#(?:[0-9a-fA-F]{3}){1,2}/)?.[0]
+          || getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+        const platName = btn.dataset.name;
+        const platKey = btn.dataset.platform;
+
+        state.platform = platKey;
+        state.platformName = platName;
+
+        document.documentElement.style.setProperty('--theme-color', hexColor);
+        const c = hexColor.substring(1).split('');
+        let r, g, b;
+        if (c.length === 3) { r=parseInt(c[0]+c[0],16); g=parseInt(c[1]+c[1],16); b=parseInt(c[2]+c[2],16); }
+        else { r=parseInt(c[0]+c[1],16); g=parseInt(c[2]+c[3],16); b=parseInt(c[4]+c[5],16); }
+        document.documentElement.style.setProperty('--theme-glow', `rgba(${r}, ${g}, ${b}, 0.22)`);
+        const dr = Math.round(r * 0.75), dg = Math.round(g * 0.75), db = Math.round(b * 0.75);
+        document.documentElement.style.setProperty('--theme-color-dark', `rgb(${dr}, ${dg}, ${db})`);
+        document.documentElement.style.setProperty('--theme-shadow', `rgba(${dr}, ${dg}, ${db}, 0.28)`);
+        document.documentElement.style.setProperty('--theme-shadow-hover', `rgba(${dr}, ${dg}, ${db}, 0.35)`);
+
+        document.getElementById('platform-name').innerText = `${platName}矩阵`;
+        document.getElementById('val-nodes').innerText = (8000 + Math.floor(Math.random() * 20000)).toLocaleString();
+
+        scrollPlatform.innerHTML = `<i class="fas fa-feather-alt"></i> ${platName}`;
+
+        // 更新帖子互动指标（按平台）
+        renderPostActions(platKey);
+
+        // 首页：切换平台时重触发 Layered Parallax
+        if (document.getElementById('module-simulation')?.classList.contains('active')) {
+          const stageWrap = document.querySelector('.stage-wrap');
+          if (stageWrap) {
+            stageWrap.classList.add('parallax-reset');
+            stageWrap.offsetHeight;
+            stageWrap.classList.remove('parallax-reset');
+          }
+        }
+        // 第二页智能体画像录：切换平台时重触发入场动画
+        if (document.getElementById('module-agents')?.classList.contains('active')) {
+          const ag = document.getElementById('agents-content');
+          if (ag) {
+            ag.classList.remove('analytics-animate');
+            ag.classList.add('agents-reset');
+            ag.offsetHeight;
+            ag.classList.remove('agents-reset');
+            ag.classList.add('analytics-animate');
+          }
+        }
+        // 全息图谱页面：切换平台时重触发所有图表动画
+        if (document.getElementById('module-analytics')?.classList.contains('active')) {
+          const ac = document.getElementById('analytics-content');
+          if (ac) {
+            ac.classList.remove('analytics-animate');
+            ac.offsetHeight;
+            ac.classList.add('analytics-animate');
+          }
+          Object.keys(chartsObj).forEach(k => { chartsObj[k]?.dispose(); chartsObj[k] = null; });
+        }
+        renderCharts();
+
+        // 让当前水墨云也跟着换色（不必等下一次 spawn）
+        try {
+          for (const blob of inkBlobs) blob.tint = hexColor;
+        } catch (e) {}
+      });
+    });
 
     // ============================================================
     // 参数变化 -> 更新卷轴头
@@ -1494,23 +1535,19 @@
     ctrlTopic.addEventListener('input', () => {
       updateTopicFromUI();
       toggleDiscussionRow();
-      if (typeof syncSimulationBlocks === 'function') syncSimulationBlocks();
     });
     ctrlDiscussion.addEventListener('input', (e) => {
       state.discussion = e.target.value;
-      if (typeof syncSimulationBlocks === 'function') syncSimulationBlocks();
     });
     ctrlRounds.addEventListener('input', (e) => {
       state.rounds = parseInt(e.target.value);
       roundsVal.innerText = `${state.rounds} 帖`;
       scrollRounds.innerHTML = `<i class="fas fa-layer-group"></i> ${state.rounds} 帖`;
-      if (typeof syncSimulationBlocks === 'function') syncSimulationBlocks();
     });
     ctrlModel.addEventListener('change', (e) => {
       state.model = e.target.value;
       state.modelName = (ctrlModel.options[ctrlModel.selectedIndex]?.text || 'LLM').split(' ')[0];
       scrollModel.innerHTML = `<i class="fas fa-brain"></i> ${state.modelName}`;
-      if (typeof syncSimulationBlocks === 'function') syncSimulationBlocks();
     });
 
     // 初始化显示
@@ -1596,7 +1633,6 @@
 
       thread.innerHTML = '';
       (page.replies || []).forEach(u => thread.appendChild(renderUtterCard(u)));
-      if (typeof syncSimulationBlocks === 'function') syncSimulationBlocks();
 
       if (pageInfo) pageInfo.textContent = `第 ${state.currentPage} 帖 / 共 ${total} 帖`;
       if (btnPagePrev) btnPagePrev.disabled = state.currentPage <= 1;
@@ -1802,7 +1838,6 @@
           if (_barSim) _barSim.style.width = `${currentSim * 100}%`;
           if (_styleEl) _styleEl.innerText = currentStyle.toFixed(1) + '%';
           if (_barStyle) _barStyle.style.width = `${currentStyle}%`;
-          if (typeof syncSimulationBlocks === 'function') syncSimulationBlocks();
 
           actions.forEach(a => {
             const b = base[a.key] || 5;
@@ -1861,7 +1896,6 @@
         placeholder.classList.remove('hidden');
         content.classList.add('hidden');
         content.innerHTML = '';
-        if (typeof syncSimulationBlocks === 'function') syncSimulationBlocks();
         return;
       }
       lastReportData = data;
@@ -1875,7 +1909,6 @@
         suggestions.map(s => `<p class="mb-2">· ${s}</p>`).join('');
       placeholder.classList.add('hidden');
       content.classList.remove('hidden');
-      if (typeof syncSimulationBlocks === 'function') syncSimulationBlocks();
     }
 
     // 报告点击放大（无论有无内容都可点击）
@@ -1883,24 +1916,24 @@
     const reportModalOverlay = document.getElementById('report-modal-overlay');
     const reportModalBody = document.getElementById('report-modal-body');
     const reportModalClose = document.getElementById('report-modal-close');
-    function openReportModal(containerEl) {
-      if (!reportModalBody || !reportModalOverlay) return;
-      const content = containerEl ? containerEl.querySelector('.sync-report-content, #report-content') : document.getElementById('report-content');
-      const placeholder = containerEl ? containerEl.querySelector('.sync-report-placeholder, #report-placeholder') : document.getElementById('report-placeholder');
-      let html = '';
-      if (content && !content.classList.contains('hidden') && content.innerHTML.trim()) {
-        html = content.innerHTML;
-      } else if (placeholder) {
-        html = '<p>' + placeholder.textContent + '</p>';
-      }
-      reportModalBody.innerHTML = html || '<p style="color:var(--ink-light);">暂无内容</p>';
-      reportModalOverlay.classList.add('active');
+    if (reportArea) {
+      reportArea.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const content = document.getElementById('report-content');
+        const placeholder = document.getElementById('report-placeholder');
+        let html = '';
+        if (content && !content.classList.contains('hidden') && content.innerHTML.trim()) {
+          html = content.innerHTML;
+        } else if (placeholder) {
+          html = '<p>' + placeholder.textContent + '</p>';
+        }
+        if (reportModalBody && reportModalOverlay) {
+          reportModalBody.innerHTML = html || '<p style="color:var(--ink-light);">暂无内容</p>';
+          reportModalOverlay.classList.add('active');
+        }
+      });
     }
-    if (reportArea) reportArea.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openReportModal(e.currentTarget); });
-    document.addEventListener('click', (e) => {
-      const area = e.target.closest('.report-sync-area');
-      if (area) { e.preventDefault(); e.stopPropagation(); openReportModal(area); }
-    });
     function closeReportModal(){ reportModalOverlay?.classList.remove('active'); }
     if (reportModalClose) reportModalClose.addEventListener('click', closeReportModal);
     if (reportModalOverlay) reportModalOverlay.addEventListener('click', (e) => { if (e.target === reportModalOverlay) closeReportModal(); });
@@ -2053,11 +2086,6 @@
       return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
     }
 
-    function getChartEls(type) {
-      const elms = document.querySelectorAll('[data-chart="' + type + '"], #chart-' + type);
-      return Array.from(elms).filter(el => el.offsetParent);
-    }
-
     function renderCharts() {
       const isDark = document.body.classList.contains('dark-mode');
       const chartInk = isDark ? '#e5e7eb' : '#1f2937';
@@ -2070,13 +2098,27 @@
       const primaryLight = hexLighten(primaryColor, 0.35);
       const axisLineColor = chartAxisColor;
 
-      const bambooData = [ { label: '语义分析', val: 82 }, { label: '风格', val: 48 }, { label: '观点', val: 25 }, { label: '复杂度', val: 12 }, { label: '行为', val: 7 } ];
-      const bambooHtml = bambooData.map((d, i) => `<div class="bamboo-strip"><span class="bamboo-label">${d.label}</span><div class="bamboo-track"><div class="bamboo-fill" style="--bamboo-w: ${d.val}%"></div></div><span class="bamboo-val">${d.val}%</span></div>`).join('');
-      getChartEls('rf').forEach(el => { el.innerHTML = bambooHtml; });
-
-      getChartEls('radar').forEach((el, i) => {
-        const key = 'radar_' + i;
-        if (!chartsObj[key]) chartsObj[key] = echarts.init(el);
+      if (document.getElementById('chart-rf')?.offsetParent !== null) {
+        const bambooData = [
+          { label: '语义分析', val: 82 },
+          { label: '风格', val: 48 },
+          { label: '观点', val: 25 },
+          { label: '复杂度', val: 12 },
+          { label: '行为', val: 7 }
+        ];
+        const bambooHtml = bambooData.map((d, i) => `
+          <div class="bamboo-strip">
+            <span class="bamboo-label">${d.label}</span>
+            <div class="bamboo-track">
+              <div class="bamboo-fill" style="--bamboo-w: ${d.val}%"></div>
+            </div>
+            <span class="bamboo-val">${d.val}%</span>
+          </div>
+        `).join('');
+        document.getElementById('chart-rf').innerHTML = bambooHtml;
+      }
+      if (document.getElementById('chart-radar')?.offsetParent !== null) {
+        if (!chartsObj.radar) chartsObj.radar = echarts.init(document.getElementById('chart-radar'));
         const radarData = [
           { name: '极化程度', value: 80 },
           { name: '互动深度', value: 45 },
@@ -2084,7 +2126,7 @@
           { name: '情绪强度', value: 85 },
           { name: '商业转化', value: 30 }
         ];
-        chartsObj[key].setOption({
+        chartsObj.radar.setOption({
           animation: true,
           animationDuration: 1000,
           animationDelay: 200,
@@ -2105,11 +2147,10 @@
             emphasis: { itemStyle: { borderColor: chartInk, borderWidth: 1.5 } }
           }]
         });
-      });
+      }
 
-      getChartEls('heat').forEach((el, i) => {
-        const key = 'heat_' + i;
-        if (!chartsObj[key]) chartsObj[key] = echarts.init(el);
+      if (document.getElementById('chart-heat')?.offsetParent !== null) {
+        if (!chartsObj.heat) chartsObj.heat = echarts.init(document.getElementById('chart-heat'));
         const heatX = ['古琴', '汉服', '非遗', '国风舞', '水墨动画', '茶道'];
         const heatY = ['原教旨', '先锋派', '考据党', '大众'];
         const hData = [
@@ -2120,7 +2161,7 @@
           [4,0,0.72],[4,1,0.28],[4,2,0.65],[4,3,0.44],
           [5,0,0.48],[5,1,0.55],[5,2,0.39],[5,3,0.81]
         ];
-        chartsObj[key].setOption({
+        chartsObj.heat.setOption({
           animation: true,
           animationDuration: 800,
           animationDelay: (idx) => idx * 60,
@@ -2132,12 +2173,11 @@
           visualMap: { show: true, min: 0, max: 1, orient: 'horizontal', left: 'center', bottom: '2%', textStyle: { color: textColor, fontFamily: 'Noto Sans SC', fontSize: 11 }, inRange: { color: [heatmapLow, hexToRgba(primaryColor, 0.5), primaryColor] } },
           series: [{ type: 'heatmap', data: hData, itemStyle: { borderColor: 'rgba(255,255,255,0.8)', borderWidth: 1, borderRadius: 6 }, label: { show: true, color: chartInk, fontSize: 11, fontFamily: 'Noto Sans SC', formatter: (p) => (p.data[2] * 100).toFixed(0) + '%' } }]
         });
-      });
+      }
 
-      getChartEls('val1').forEach((el, i) => {
-        const key = 'val1_' + i;
-        if (!chartsObj[key]) chartsObj[key] = echarts.init(el);
-        chartsObj[key].setOption({
+      if (document.getElementById('chart-val1')?.offsetParent !== null) {
+        if (!chartsObj.val1) chartsObj.val1 = echarts.init(document.getElementById('chart-val1'));
+        chartsObj.val1.setOption({
           animation: true,
           animationDuration: 1000,
           animationDelay: 300,
@@ -2151,12 +2191,11 @@
             { type: 'line', data: [[0, 0], [1, 1]], symbol: 'none', lineStyle: { type: 'dashed', color: chartAxisColor, width: 1.5 } }
           ]
         });
-      });
+      }
 
-      getChartEls('val2').forEach((el, i) => {
-        const key = 'val2_' + i;
-        if (!chartsObj[key]) chartsObj[key] = echarts.init(el);
-        chartsObj[key].setOption({
+      if (document.getElementById('chart-val2')?.offsetParent !== null) {
+        if (!chartsObj.val2) chartsObj.val2 = echarts.init(document.getElementById('chart-val2'));
+        chartsObj.val2.setOption({
           animation: true,
           animationDuration: 1000,
           animationDelay: 450,
@@ -2170,249 +2209,52 @@
             { type: 'line', data: [[0, 0], [1, 1]], symbol: 'none', lineStyle: { type: 'dashed', color: chartAxisColor, width: 1.5 } }
           ]
         });
-      });
+      }
     }
 
     window.addEventListener('resize', () => Object.values(chartsObj).forEach(c => c.resize()));
 
     // ============================================================
-    // 打通成一整页：18 块从上往下连续排列，滚动驱动主题色
+    // 导航切换
     // ============================================================
-    const mainScroll = document.getElementById('main-scroll');
-    const PLATFORMS = ['tieba','weibo','zhihu','xiaohongshu','douyin','bilibili'];
-    const MODULES = ['simulation','agents','analytics'];
-    const PLATFORM_NAMES = { tieba:'贴吧', weibo:'微博', zhihu:'知乎', xiaohongshu:'小红书', douyin:'抖音', bilibili:'B站' };
-    const PLATFORM_COLORS = { tieba:'#3385ff', weibo:'#e6162d', zhihu:'#0084ff', xiaohongshu:'#ff2442', douyin:'#8b5cf6', bilibili:'#fb7299' };
-
-    const analyticsBlockTpl = () => `
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 kpi-grid">
-          <div class="kpi-card"><div class="text-xs title-font mb-2" style="color: var(--ink-light);">训练集 MAE (内测)</div><div class="text-2xl font-bold font-sans" style="color: var(--ink-main);">12.34 <span class="text-sm ml-1 font-medium kpi-accent"><i class="fas fa-arrow-down"></i> 2.1%</span></div></div>
-          <div class="kpi-card"><div class="text-xs title-font mb-2" style="color: var(--ink-light);">测试集 MAE (盲测)</div><div class="text-2xl font-bold font-sans" style="color: var(--ink-main);">15.71 <span class="text-sm ml-1 font-medium kpi-accent"><i class="fas fa-arrow-down"></i> 1.5%</span></div></div>
-          <div class="kpi-card"><div class="text-xs title-font mb-2" style="color: var(--ink-light);">R² Score (拟合优度)</div><div class="text-2xl font-bold font-sans" style="color: var(--ink-main);">0.885</div></div>
-        </div>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <div class="hud-panel p-6 chart-panel"><h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2"><i class="fas fa-signal mr-2 section-icon-theme"></i>特征重要性 (RF)</h3><div class="chart-box bamboo-chart" data-chart="rf"></div><div class="chart-conclusion">语义分析是核心驱动力，文本语义与表达风格对受众分类贡献最大。</div></div>
-          <div class="hud-panel p-6 chart-panel"><h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2"><i class="fas fa-chart-bar mr-2 section-icon-theme"></i>核心能力分布 (Faction Radar)</h3><div class="chart-box" data-chart="radar"></div><div class="chart-conclusion">极化程度与裂变率较高，情绪强度突出。</div></div>
-          <div class="hud-panel p-6 chart-panel"><h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2"><i class="fas fa-dot-circle mr-2 section-icon-theme"></i>内测集验证</h3><div class="chart-box" data-chart="val1"></div><div class="chart-conclusion">内测集真实域与推演域拟合良好。</div></div>
-          <div class="hud-panel p-6 chart-panel"><h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2"><i class="fas fa-gem mr-2 section-icon-theme"></i>盲测集验证</h3><div class="chart-box" data-chart="val2"></div><div class="chart-conclusion">盲测集验证显示模型具备一定泛化能力。</div></div>
-        </div>
-        <div class="hud-panel p-6 mb-10 chart-panel"><h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2"><i class="fas fa-th mr-2 section-icon-theme"></i>派系情感热力图 (Emotion Field)</h3><div class="chart-box" data-chart="heat" style="height: 400px;"></div><div class="chart-conclusion">不同派系对各类文化形态的情感强度存在明显差异。</div></div>`;
-
-    function appendFlowBlocks() {
-      const container = document.getElementById('flow-blocks-append');
-      const agentsEl = document.getElementById('agentsGrid');
-      if (!container) return;
-      const agentsTpl = agentsEl ? agentsEl.innerHTML : '';
-      const simScrollTpl = `
-        <div class="stage-wrap" style="position:relative;">
-          <div class="scroll-stage"><div class="scroll"><div class="scroll-paper">
-            <div class="scroll-header"><div class="scroll-title"><span class="seal">章</span><span>推演紀要 · 卷</span></div><div class="scroll-sub"><span class="chip"><i class="fas fa-feather-alt"></i> PLATFORM_NAME</span></div></div>
-            <div class="scroll-body scrollbar-ink">
-              <div class="post-card ink-in"><span class="seal-corner seal-corner-tr">推</span><div class="post-meta"><span class="chip"><i class="fas fa-compass"></i> 话题</span><span class="chip sync-post-topic">非遗数字化传承与现代重构</span><span class="chip"><i class="fas fa-hourglass-half"></i> 状态</span><span class="chip sync-post-status" style="color: var(--ink-light);">静候指令</span></div><div class="post-title sync-post-title">标题：非遗数字化，是"活化"还是"消解"？</div><div class="post-content sync-post-content">正文：当传统技艺被短视频与AIGC重新编排，受众的认同与抵触会如何分化？欢迎从"传承价值、审美体验、商业边界"三条线索展开讨论。</div><div class="post-actions sync-post-actions"></div></div>
-              <div class="round-divider"><span class="seal-corner seal-corner-bl">卷</span><span class="sync-hint-text">未开卷 · 待落墨</span></div>
-              <div class="thread thread-sync"></div>
-            </div>
-          </div></div></div>
-        </div>
-        <div class="block-panels">
-          <div class="hud-panel p-6 shrink-0">
-            <h3 class="section-title title-font text-[16px] mb-5 pb-3" style="color: var(--ink-main);">
-              <span class="section-label-vertical">參</span><i class="fas fa-cogs mr-2 section-icon-theme"></i>推演参数设定<span class="seal seal-inline">設</span>
-            </h3>
-            <div class="space-y-5">
-              <div>
-                <label class="block text-[13px] font-bold" style="color: var(--ink-light);">演化话题 (Topic)</label>
-                <input type="text" class="sync-ctrl-topic" value="非遗数字化传承与现代重构" placeholder="请输入你要推演的话题..." readonly>
-              </div>
-              <div class="sync-discussion-row hidden"><label class="block text-[13px] font-bold" style="color: var(--ink-light);">讨论内容</label><input type="text" class="sync-ctrl-discussion" placeholder="请输入讨论内容..." readonly></div>
-              <div>
-                <label class="block text-[13px] font-bold" style="color: var(--ink-light);">承载大模型 (LLM Backend)</label>
-                <select class="sync-ctrl-model" disabled><option value="qwen">通义千问</option><option value="doubao">火山方舟</option><option value="deepseek" selected>DeepSeek</option></select>
-              </div>
-              <div>
-                <div class="flex justify-between text-[13px] font-bold" style="color: var(--ink-light);"><label>推演帖子数 (Posts)</label><span class="sync-rounds-val" style="color: var(--theme-color)">10 帖</span></div>
-                <div class="range-wrap mt-3"><input type="range" class="sync-ctrl-rounds range-ink" min="1" max="50" value="10" disabled><div class="range-ticks" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <button type="button" class="sync-btn-start btn-primary" title="跳至贴吧推演沙盘操作"><i class="fas fa-play mr-2"></i>开启推演</button>
-                <button type="button" class="sync-btn-stop btn-danger" disabled><i class="fas fa-hand mr-2"></i>终止推演</button>
-              </div>
-            </div>
-          </div>
-          <div class="hud-panel p-6 shrink-0" style="position:relative;">
-            <h3 class="section-title title-font text-[16px] mb-5 pb-3" style="color: var(--ink-main);">
-              <span class="section-label-vertical">究</span><i class="fas fa-check-double mr-2 section-icon-theme"></i>推演真实性考究<span class="seal seal-inline">似</span>
-            </h3>
-            <div class="space-y-4">
-              <div><div class="flex justify-between text-[13px] title-font" style="color: var(--ink-main);"><span>评论语义相似度 (Sim)</span><span class="font-bold font-sans sync-metric-sim">0.00</span></div><div class="h-[6px] bg-[rgba(0,0,0,0.06)] rounded overflow-hidden mt-2"><div class="h-full sync-bar-sim" style="width:0%; background: var(--theme-color); transition: width 0.5s ease-out;"></div></div></div>
-              <div><div class="flex justify-between text-[13px] title-font" style="color: var(--ink-main);"><span>风格一致性 (Style)</span><span class="font-bold font-sans sync-metric-style">0.0%</span></div><div class="h-[6px] bg-[rgba(0,0,0,0.06)] rounded overflow-hidden mt-2"><div class="h-full sync-bar-style" style="width:0%; background: var(--color-weibo); transition: width 0.5s ease-out;"></div></div></div>
-            </div>
-          </div>
-          <div class="hud-panel p-6 flex-1 min-h-0 flex flex-col overflow-hidden report-panel">
-            <h3 class="section-title title-font text-[16px] mb-5 pb-3 shrink-0 flex items-center justify-between gap-2" style="color: var(--ink-main);">
-              <span><span class="section-label-vertical">議</span><i class="fas fa-scroll mr-2 section-icon-theme"></i>推演建议<span class="seal seal-inline">報</span></span>
-              <button type="button" class="sync-btn-download-report text-[12px] px-2 py-1 rounded border border-[rgba(0,0,0,0.12)] hover:border-[var(--theme-color)] transition-colors shrink-0" title="下载报告"><i class="fas fa-download mr-1"></i>下载</button>
-            </h3>
-            <div class="flex-1 overflow-y-auto scrollbar-ink text-[13px] leading-relaxed cursor-pointer report-sync-area report-click-expand" style="color: var(--ink-light); min-height: 60px;" title="点击放大查看全文">
-              <p class="report-placeholder sync-report-placeholder"><span class="report-empty-icon"><i class="fas fa-file-alt"></i></span>推演完成后，将根据多智能体讨论结果生成策略建议。<br><span class="text-[11px] opacity-70">（点击此处可放大查看）</span></p>
-              <div class="sync-report-content hidden"></div>
-            </div>
-          </div>
-        </div>`;
-      for (let i = 3; i < 18; i++) {
-        const platform = PLATFORMS[Math.floor(i/3)];
-        const module = MODULES[i % 3];
-        const name = PLATFORM_NAMES[platform];
-        if (module === 'simulation') {
-          container.insertAdjacentHTML('beforeend', `
-            <div class="flow-block block-simulation" data-idx="${i}" data-platform="${platform}" data-module="simulation">
-              ${simScrollTpl.replace(/PLATFORM_NAME/g, name)}
-            </div>`);
-        } else if (module === 'agents') {
-          container.insertAdjacentHTML('beforeend', `
-            <div class="flow-block block-agents" data-idx="${i}" data-platform="${platform}" data-module="agents">
-              <div class="w-full"><div class="hud-panel p-8 agents-panel"><h3 class="section-title title-font text-[22px] mb-8 pb-4"><span class="section-label-vertical">錄</span><i class="fas fa-users mr-3 section-icon-theme"></i>${name} · 多智能体画像录<span class="seal seal-inline">錄</span></h3><div class="grid grid-cols-2 lg:grid-cols-4 gap-8 agents-grid-clone">${agentsTpl}</div></div></div>
-            </div>`);
-        } else {
-          container.insertAdjacentHTML('beforeend', `
-            <div class="flow-block block-analytics" data-idx="${i}" data-platform="${platform}" data-module="analytics">
-              <div class="w-full analytics-content">
-                <div class="mb-6 title-font text-xl font-bold flex items-center gap-3" style="color: var(--ink-main);"><span style="color: var(--theme-color);">全息</span><span>${name} · 推演数据图谱</span><span class="seal seal-inline" style="margin-left: 4px;">譜</span></div>
-                ${analyticsBlockTpl()}
-              </div>
-            </div>`);
-        }
-      }
-    }
-
-    let sections = document.querySelectorAll('.flow-block');
-
-    function syncSimulationBlocks() {
-      const threadEl = document.getElementById('thread');
-      if (threadEl) {
-        const html = threadEl.innerHTML;
-        document.querySelectorAll('.thread-sync').forEach(el => { el.innerHTML = html; });
-      }
-      const syncText = (id, cls) => {
-        const src = document.getElementById(id);
-        if (src) document.querySelectorAll(cls).forEach(el => { el.textContent = src.textContent; });
-      };
-      const syncVal = (id, cls) => {
-        const src = document.getElementById(id);
-        if (src && (src.value !== undefined || src.tagName === 'SELECT')) document.querySelectorAll(cls).forEach(el => { if (el.value !== undefined) el.value = src.value; });
-      };
-      const syncStyle = (id, cls, prop) => {
-        const src = document.getElementById(id);
-        if (src && src.style[prop]) document.querySelectorAll(cls).forEach(el => { el.style[prop] = src.style[prop]; });
-      };
-      syncText('post-topic-chip', '.sync-post-topic');
-      syncText('post-status-chip', '.sync-post-status');
-      syncText('post-title', '.sync-post-title');
-      syncText('post-content', '.sync-post-content');
-      syncText('hint-divider-text', '.sync-hint-text');
-      const postActions = document.getElementById('post-actions');
-      if (postActions) document.querySelectorAll('.sync-post-actions').forEach(el => { el.innerHTML = postActions.innerHTML; });
-      syncText('metric-sim', '.sync-metric-sim');
-      syncText('metric-style', '.sync-metric-style');
-      syncStyle('bar-sim', '.sync-bar-sim', 'width');
-      syncStyle('bar-style', '.sync-bar-style', 'width');
-      syncVal('ctrl-topic', '.sync-ctrl-topic');
-      syncVal('ctrl-discussion', '.sync-ctrl-discussion');
-      syncVal('ctrl-model', '.sync-ctrl-model');
-      syncVal('ctrl-rounds', '.sync-ctrl-rounds');
-      syncText('rounds-val', '.sync-rounds-val');
-      const discRow = document.getElementById('discussion-row');
-      if (discRow) document.querySelectorAll('.sync-discussion-row').forEach(el => { el.classList.toggle('hidden', discRow.classList.contains('hidden')); });
-      const ph = document.getElementById('report-placeholder');
-      const rc = document.getElementById('report-content');
-      if (ph && rc) {
-        document.querySelectorAll('.sync-report-placeholder').forEach(el => {
-          el.innerHTML = ph.innerHTML;
-          el.classList.toggle('hidden', ph.classList.contains('hidden'));
-        });
-        document.querySelectorAll('.sync-report-content').forEach(el => {
-          el.innerHTML = rc.innerHTML;
-          el.classList.toggle('hidden', rc.classList.contains('hidden'));
-        });
-      }
-    }
-
-    document.addEventListener('click', (e) => {
-      if (e.target.closest('.sync-btn-start')) {
-        e.preventDefault();
-        const sec0 = document.querySelector('.flow-block[data-idx="0"]');
-        if (sec0) sec0.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      if (e.target.closest('.sync-btn-download-report')) {
-        e.preventDefault();
-        const btn = document.getElementById('btn-download-report');
-        if (btn) btn.click();
-      }
-    });
-
-    function applyTheme(platform) {
-      const hex = PLATFORM_COLORS[platform] || PLATFORM_COLORS.tieba;
-      document.documentElement.style.setProperty('--theme-color', hex);
-      const c = hex.substring(1).split('');
-      let r,g,b; 
-      if (c.length===3) { r=parseInt(c[0]+c[0],16); g=parseInt(c[1]+c[1],16); b=parseInt(c[2]+c[2],16); }
-      else { r=parseInt(c[0]+c[1],16); g=parseInt(c[2]+c[3],16); b=parseInt(c[4]+c[5],16); }
-      document.documentElement.style.setProperty('--theme-glow', `rgba(${r},${g},${b},0.22)`);
-      const dr=Math.round(r*0.75), dg=Math.round(g*0.75), db=Math.round(b*0.75);
-      document.documentElement.style.setProperty('--theme-color-dark', `rgb(${dr},${dg},${db})`);
-    }
-
-    function syncUIFromSection(idx) {
-      const sec = sections[idx];
-      if (!sec) return;
-      const platform = sec.dataset.platform;
-      const module = sec.dataset.module;
-      state.platform = platform;
-      state.platformName = PLATFORM_NAMES[platform] || platform;
-      document.body.dataset.currentPlatform = platform;
-      document.getElementById('platform-name').innerText = `${state.platformName}矩阵`;
-      if (scrollPlatform) scrollPlatform.innerHTML = `<i class="fas fa-feather-alt"></i> ${state.platformName}`;
-      platformBtns.forEach(b => {
-        b.classList.toggle('active-platform', b.dataset.platform === platform);
-      });
-      sidebarItems.forEach(i => {
-        i.classList.toggle('active', i.dataset.module === module);
-      });
-      renderPostActions(platform);
-      setTimeout(() => renderCharts(), 80);
-    }
-
     const sidebarItems = document.querySelectorAll('.sidebar-icon[data-module]');
-
-    const obs = new IntersectionObserver(entries => {
-      for (const e of entries) {
-        if (e.isIntersecting) {
-          const idx = parseInt(e.target.dataset.idx, 10);
-          if (!isNaN(idx)) syncUIFromSection(idx);
-          break;
-        }
-      }
-    }, { root: mainScroll, rootMargin: '-40% 0px', threshold: 0 });
-    sections.forEach(s => obs.observe(s));
-    if (mainScroll) syncUIFromSection(0);
-
-    function scrollToSection(idx) {
-      const sec = sections[idx];
-      if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    const modules = {
+      simulation: document.getElementById('module-simulation'),
+      agents: document.getElementById('module-agents'),
+      analytics: document.getElementById('module-analytics')
+    };
     sidebarItems.forEach(item => {
       item.addEventListener('click', () => {
-        const mod = item.dataset.module;
-        const idx = PLATFORMS.indexOf(state.platform) * 3 + MODULES.indexOf(mod);
-        scrollToSection(Math.max(0, idx));
-      });
-    });
+        sidebarItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        Object.values(modules).forEach(mod => mod && mod.classList.remove('active'));
+        const target = modules[item.dataset.module];
+        if (target) target.classList.add('active');
 
-    platformBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const plat = btn.dataset.platform;
-        const idx = PLATFORMS.indexOf(plat) * 3;
-        scrollToSection(idx);
+        if (item.dataset.module === 'simulation') {
+          document.body.classList.remove('mode-full');
+        } else {
+          document.body.classList.add('mode-full');
+        }
+
+        if (item.dataset.module === 'analytics') {
+          const ac = document.getElementById('analytics-content');
+          if (ac) {
+            ac.classList.remove('analytics-animate');
+            ac.offsetHeight;
+            ac.classList.add('analytics-animate');
+          }
+        }
+        if (item.dataset.module === 'agents') {
+          const ag = document.getElementById('agents-content');
+          if (ag) {
+            ag.classList.remove('analytics-animate');
+            ag.offsetHeight;
+            ag.classList.add('analytics-animate');
+          }
+        }
+
+        setTimeout(() => { renderCharts(); }, 80);
       });
     });
 
@@ -2443,10 +2285,6 @@
         </div>
       </div>
     `).join('');
-
-    appendFlowBlocks();
-    sections = document.querySelectorAll('.flow-block');
-    sections.forEach(s => { try { obs.observe(s); } catch(e){} });
 
     // 初次渲染图表
     renderCharts();
