@@ -137,7 +137,7 @@
       color: var(--ink-tertiary);
       font-size: 1rem;
       cursor: pointer;
-      transition: color 0.2s, background 0.2s, transform 0.2s;
+      transition: transform 0.2s;
       border-radius: var(--radius-sm);
     }
     .sidebar-icon:hover { color: var(--ink-main); background: var(--bg-hover); transform: scale(1.05); }
@@ -164,7 +164,7 @@
       border: none;
       border-radius: var(--radius-sm);
       cursor: pointer;
-      transition: color 0.2s, background 0.2s, transform 0.15s;
+      transition: transform 0.15s;
       background: transparent;
     }
     .plat-btn:hover { color: var(--ink-main); background: var(--bg-hover); }
@@ -986,10 +986,9 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* 首页右侧三块面板：标题图标随平台主题色，稍深一点 */
+    /* 首页右侧三块面板：标题图标随平台主题色，稍深一点；滚动切换时直接显示，无变色动效 */
     .section-icon-theme {
       color: var(--theme-color-dark);
-      transition: color 0.5s ease;
     }
     /* 首页右侧三块面板：与图表面板统一的悬浮动效（随平台主题色） */
     #module-simulation .hud-panel {
@@ -1225,7 +1224,7 @@
     <div class="top-bar pointer-events-auto">
       <div class="flex items-center gap-6">
         <span class="title-font text-lg tracking-widest font-bold" style="color: var(--ink-main);">
-          文化受众 · <span style="color: var(--theme-color); transition: color 0.5s;" id="platform-name">天机矩阵</span>
+          文化受众 · <span style="color: var(--theme-color);" id="platform-name">天机矩阵</span>
         </span>
         <div class="flex gap-2" id="platform-switches">
           <button class="plat-btn active-platform" data-platform="tieba" data-color="var(--color-tieba)" data-name="贴吧">贴吧</button>
@@ -1238,7 +1237,7 @@
       </div>
       <div class="flex items-center gap-8">
         <div class="flex gap-8 text-sm font-bold title-font" style="color: var(--ink-light);">
-          <div>话题气脉: <span style="color: var(--theme-color); font-size: 1.2rem; transition: color 0.5s;" id="val-nodes">12,049</span></div>
+          <div>话题气脉: <span style="color: var(--theme-color); font-size: 1.2rem;" id="val-nodes">12,049</span></div>
           <div>引擎状态: <span style="color: #52c41a;"><i class="fas fa-plug"></i> 灵台已连</span></div>
         </div>
         <button type="button" id="dark-mode-toggle" class="dark-toggle" title="切换暗色模式">
