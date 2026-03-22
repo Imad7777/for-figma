@@ -168,8 +168,40 @@
       background: transparent;
     }
     .plat-btn:hover { color: var(--ink-main); background: var(--bg-hover); }
-    .plat-btn.active-platform { color: var(--theme-color); background: var(--theme-glow); box-shadow: 0 2px 0 0 var(--theme-color); }
+    /* 每个平台按钮激活时使用该平台写死的颜色 */
+    .plat-btn[data-platform="tieba"].active-platform { color: var(--color-tieba); background: rgba(51,133,255,0.15); box-shadow: 0 2px 0 0 var(--color-tieba); }
+    .plat-btn[data-platform="weibo"].active-platform { color: var(--color-weibo); background: rgba(230,22,45,0.15); box-shadow: 0 2px 0 0 var(--color-weibo); }
+    .plat-btn[data-platform="zhihu"].active-platform { color: var(--color-zhihu); background: rgba(0,132,255,0.15); box-shadow: 0 2px 0 0 var(--color-zhihu); }
+    .plat-btn[data-platform="xiaohongshu"].active-platform { color: var(--color-xhs); background: rgba(255,36,66,0.15); box-shadow: 0 2px 0 0 var(--color-xhs); }
+    .plat-btn[data-platform="douyin"].active-platform { color: var(--color-douyin); background: rgba(139,92,246,0.15); box-shadow: 0 2px 0 0 var(--color-douyin); }
+    .plat-btn[data-platform="bilibili"].active-platform { color: var(--color-bilibili); background: rgba(251,114,153,0.15); box-shadow: 0 2px 0 0 var(--color-bilibili); }
     .plat-btn:active { transform: scale(0.97); }
+    /* 顶栏、侧边栏随当前可见块写死显示，用 body 承载 data-current-platform */
+    body[data-current-platform="tieba"] #platform-name { color: var(--color-tieba); }
+    body[data-current-platform="weibo"] #platform-name { color: var(--color-weibo); }
+    body[data-current-platform="zhihu"] #platform-name { color: var(--color-zhihu); }
+    body[data-current-platform="xiaohongshu"] #platform-name { color: var(--color-xhs); }
+    body[data-current-platform="douyin"] #platform-name { color: var(--color-douyin); }
+    body[data-current-platform="bilibili"] #platform-name { color: var(--color-bilibili); }
+    body[data-current-platform="tieba"] #val-nodes { color: var(--color-tieba); }
+    body[data-current-platform="weibo"] #val-nodes { color: var(--color-weibo); }
+    body[data-current-platform="zhihu"] #val-nodes { color: var(--color-zhihu); }
+    body[data-current-platform="xiaohongshu"] #val-nodes { color: var(--color-xhs); }
+    body[data-current-platform="douyin"] #val-nodes { color: var(--color-douyin); }
+    body[data-current-platform="bilibili"] #val-nodes { color: var(--color-bilibili); }
+    body[data-current-platform="tieba"] .sidebar .sidebar-icon.active { color: var(--color-tieba); background: rgba(51,133,255,0.15); }
+    body[data-current-platform="tieba"] .sidebar .sidebar-icon.active::before { background: var(--color-tieba); }
+    body[data-current-platform="weibo"] .sidebar .sidebar-icon.active { color: var(--color-weibo); background: rgba(230,22,45,0.15); }
+    body[data-current-platform="weibo"] .sidebar .sidebar-icon.active::before { background: var(--color-weibo); }
+    body[data-current-platform="zhihu"] .sidebar .sidebar-icon.active { color: var(--color-zhihu); background: rgba(0,132,255,0.15); }
+    body[data-current-platform="zhihu"] .sidebar .sidebar-icon.active::before { background: var(--color-zhihu); }
+    body[data-current-platform="xiaohongshu"] .sidebar .sidebar-icon.active { color: var(--color-xhs); background: rgba(255,36,66,0.15); }
+    body[data-current-platform="xiaohongshu"] .sidebar .sidebar-icon.active::before { background: var(--color-xhs); }
+    body[data-current-platform="douyin"] .sidebar .sidebar-icon.active { color: var(--color-douyin); background: rgba(139,92,246,0.15); }
+    body[data-current-platform="douyin"] .sidebar .sidebar-icon.active::before { background: var(--color-douyin); }
+    body[data-current-platform="bilibili"] .sidebar .sidebar-icon.active { color: var(--color-bilibili); background: rgba(251,114,153,0.15); }
+    body[data-current-platform="bilibili"] .sidebar .sidebar-icon.active::before { background: var(--color-bilibili); }
+
     .dark-toggle {
       width: 36px;
       height: 36px;
@@ -688,6 +720,14 @@
     }
     .flow-block .stage-wrap .scroll-body { height: calc(100% - 52px); min-height: 280px; }
 
+    /* 每个块写死自己平台的颜色，滚到即显示，无切换逻辑 */
+    .flow-block[data-platform="tieba"] { --theme-color: var(--color-tieba); --theme-glow: rgba(51,133,255,0.22); --theme-color-dark: #2563eb; }
+    .flow-block[data-platform="weibo"] { --theme-color: var(--color-weibo); --theme-glow: rgba(230,22,45,0.22); --theme-color-dark: #ac1021; }
+    .flow-block[data-platform="zhihu"] { --theme-color: var(--color-zhihu); --theme-glow: rgba(0,132,255,0.22); --theme-color-dark: #0063bf; }
+    .flow-block[data-platform="xiaohongshu"] { --theme-color: var(--color-xhs); --theme-glow: rgba(255,36,66,0.22); --theme-color-dark: #bf1b31; }
+    .flow-block[data-platform="douyin"] { --theme-color: var(--color-douyin); --theme-glow: rgba(139,92,246,0.22); --theme-color-dark: #6845b8; }
+    .flow-block[data-platform="bilibili"] { --theme-color: var(--color-bilibili); --theme-glow: rgba(251,114,153,0.22); --theme-color-dark: #bc5572; }
+
     .chart-container { width: 100%; height: 100%; min-height: 250px; }
     .chart-box { width: 100%; height: 380px; }
     .analytics-title-vertical { display: none; }
@@ -1079,7 +1119,7 @@
     .report-modal .modal-close:hover { background: var(--bg-hover); color: var(--ink-main); }
   </style>
 </head>
-<body>
+<body data-current-platform="tieba">
 
   <!-- 水墨动态背景 -->
   <div id="ink-canvas-container">
@@ -1220,7 +1260,7 @@
     <div class="sidebar-icon" data-module="analytics" title="全息图谱"><i class="fas fa-project-diagram"></i></div>
   </div>
 
-  <div class="ml-[56px] h-full flex flex-col relative z-20 pointer-events-none">
+  <div id="top-bar-wrapper" class="ml-[56px] h-full flex flex-col relative z-20 pointer-events-none" data-current-platform="tieba">
     <div class="top-bar pointer-events-auto">
       <div class="flex items-center gap-6">
         <span class="title-font text-lg tracking-widest font-bold" style="color: var(--ink-main);">
@@ -2279,7 +2319,7 @@
       const module = sec.dataset.module;
       state.platform = platform;
       state.platformName = PLATFORM_NAMES[platform] || platform;
-      applyTheme(platform);
+      document.body.dataset.currentPlatform = platform;
       document.getElementById('platform-name').innerText = `${state.platformName}矩阵`;
       if (scrollPlatform) scrollPlatform.innerHTML = `<i class="fas fa-feather-alt"></i> ${state.platformName}`;
       platformBtns.forEach(b => {
