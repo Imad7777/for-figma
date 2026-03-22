@@ -633,6 +633,7 @@
     @keyframes moduleFadeIn { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
 
     /* ========== 18 块滚轮切换布局 ========== */
+    /* scroll-canvas 置于最上层 z-50，滚轮原生驱动；wheel-catcher 接收滚轮，点击穿透到下层 */
     .scroll-canvas {
       position: absolute;
       top: 56px;
@@ -643,9 +644,14 @@
       overflow-x: hidden;
       scroll-snap-type: y mandatory;
       -webkit-overflow-scrolling: touch;
-      z-index: 12;
+      z-index: 50;
       scrollbar-width: thin;
-      /* 保证可被滚轮操作，且位于 content-viewport 透明区域下方 */
+    }
+    .scroll-canvas .wheel-catcher {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: auto;
+      z-index: 1;
     }
     .scroll-canvas::-webkit-scrollbar { width: 8px; }
     .scroll-canvas::-webkit-scrollbar-track { background: transparent; }
@@ -657,7 +663,6 @@
       position: relative;
       flex-shrink: 0;
     }
-    /* 主区滚轮穿透：content-viewport 不拦截，让滚轮到达下层 scroll-canvas */
     .content-viewport {
       position: fixed;
       top: 56px;
@@ -665,16 +670,13 @@
       left: 56px;
       right: 0;
       z-index: 15;
-      pointer-events: none;
+      pointer-events: auto;
       display: flex;
       justify-content: flex-end;
       align-items: stretch;
     }
-    .content-viewport > .stage-wrap,
     .content-viewport > .viewport-inner {
       pointer-events: auto;
-    }
-    .content-viewport > .viewport-inner {
       width: 100%;
       max-width: 438px;
       padding: 28px 32px;
@@ -1103,7 +1105,9 @@
   </div>
 
   <!-- 18 块滚轮画布：平台优先 贴吧×3 → 微博×3 → 知乎×3 → 小红书×3 → 抖音×3 → B站×3 -->
+  <!-- wheel-catcher 在最上层接收滚轮，浏览器会自动滚动父级 scroll-canvas；点击穿透到下层内容 -->
   <div class="scroll-canvas" id="scroll-canvas">
+    <div class="wheel-catcher" id="wheel-catcher"></div>
     <div class="canvas-section" data-idx="0" data-platform="tieba" data-module="simulation"></div>
     <div class="canvas-section" data-idx="1" data-platform="tieba" data-module="agents"></div>
     <div class="canvas-section" data-idx="2" data-platform="tieba" data-module="analytics"></div>
@@ -2308,17 +2312,29 @@
     sections.forEach(s => obs.observe(s));
     syncUIFromSection(0);
 
-    (function initWheelScroll(){
-      const el = document.getElementById('scroll-canvas');
-      if (!el) return;
-      const maxScroll = () => Math.max(0, el.scrollHeight - el.clientHeight);
-      function onWheel(e) {
-        const next = el.scrollTop + e.deltaY;
-        el.scrollTop = Math.max(0, Math.min(maxScroll(), next));
-        e.preventDefault();
+    (function initWheelAndClick(){
+      const scrollCanvas = document.getElementById('scroll-canvas');
+      const catcher = document.getElementById('wheel-catcher');
+      if (!scrollCanvas || !catcher) return;
+      /* 点击穿透：catcher 在上层挡住点击，临时隐藏后找到下层元素并转发 */
+      function forwardPointerEvent(e, type) {
+        catcher.style.pointerEvents = 'none';
+        scrollCanvas.style.pointerEvents = 'none';
+        const el = document.elementFromPoint(e.clientX, e.clientY);
+        catcher.style.pointerEvents = 'auto';
+        scrollCanvas.style.pointerEvents = 'auto';
+        if (el && el !== catcher && !scrollCanvas.contains(el)) {
+          el.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window, detail: e.detail, buttons: e.buttons, relatedTarget: e.relatedTarget }));
+          if (type === 'click' && /^(INPUT|SELECT|TEXTAREA|BUTTON|A)$/.test(el.tagName)) el.focus();
+        }
         e.stopPropagation();
+        e.preventDefault();
       }
-      document.addEventListener('wheel', onWheel, { passive: false, capture: true });
+      catcher.addEventListener('click', e => forwardPointerEvent(e,'click'), true);
+      catcher.addEventListener('mousedown', e => forwardPointerEvent(e,'mousedown'), true);
+      catcher.addEventListener('mouseup', e => forwardPointerEvent(e,'mouseup'), true);
+      catcher.addEventListener('dblclick', e => forwardPointerEvent(e,'dblclick'), true);
+      catcher.addEventListener('contextmenu', e => forwardPointerEvent(e,'contextmenu'), true);
     })();
 
     function scrollToSection(idx) {
