@@ -1,0 +1,2361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文化受众推演 | Notion 风格</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+
+  <style>
+    /*
+    ========== 首页尺寸可改位置汇总（搜索「【【【首页尺寸可改」快速定位） ==========
+    1. 左侧导航栏：width, padding, 图标宽高/字号
+    2. 顶栏：height, padding
+    3. 平台按钮：padding, font-size
+    4. 输入框/下拉框：padding, font-size
+    5. 主按钮：padding, font-size
+    6. 卷轴舞台：top, left, right, padding
+    7. 卷轴轴头：width
+    8. 卷轴纸面：margin；卷轴标题/header/chip/body：font-size, padding
+    9. 贴文卡/发言卡：padding, font-size
+    10. 右侧面板：max-w-[420px], p-8（HTML 中）
+    11. 推演参数/相似度面板：p-6, p-5
+    12. 推演建议面板：p-5, min-h-[120px], text-[14px]
+    */
+    :root {
+      /* Notion 风格 · 现代中性（少土黄） */
+      --ink-main: #1f2937;
+      --ink-secondary: #6b7280;
+      --ink-tertiary: #9ca3af;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-hover: rgba(15, 23, 42, 0.06);
+      --border-default: rgba(15, 23, 42, 0.12);
+      --border-hover: rgba(15, 23, 42, 0.2);
+
+      /* 平台色（贴近各平台官方品牌色） */
+      --color-tieba: #3385ff;
+      --color-weibo: #e6162d;
+      --color-zhihu: #0084ff;
+      --color-xhs: #ff2442;
+      --color-douyin: #8b5cf6;
+      --color-bilibili: #fb7299;
+
+      --font-title: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
+      --font-body: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
+
+      --theme-color: var(--color-tieba);
+      --theme-glow: rgba(51, 133, 255, 0.15);
+      --theme-color-dark: #2563eb;
+      --accent-red: #ef4444;
+      --radius: 6px;
+      --radius-sm: 4px;
+      --ink-light: var(--ink-secondary);
+      --seal-red: var(--accent-red);
+    }
+
+    /* 暗色模式 */
+    body.dark-mode {
+      --ink-main: #e5e7eb;
+      --ink-secondary: #9ca3af;
+      --ink-tertiary: #6b7280;
+      --bg-page: #111827;
+      --bg-card: #1f2937;
+      --bg-hover: rgba(255, 255, 255, 0.06);
+      --border-default: rgba(255, 255, 255, 0.12);
+      --border-hover: rgba(255, 255, 255, 0.2);
+    }
+    body.dark-mode { background: linear-gradient(180deg, #111827 0%, #0f172a 100%) !important; }
+    body.dark-mode .hud-panel { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); }
+    body.dark-mode .scroll-paper { background: var(--bg-card); }
+    body.dark-mode .post-card { background: var(--bg-card); }
+    body.dark-mode .utter-card { background: rgba(31, 41, 55, 0.8); }
+    body.dark-mode .chart-panel .chart-box { background: linear-gradient(180deg, #111827 0%, rgba(17, 24, 39, 0.8) 100%); }
+    body.dark-mode .agents-page .agents-panel { background: linear-gradient(180deg, var(--bg-card) 0%, #111827 100%); }
+    body.dark-mode .report-placeholder .report-empty-icon { color: var(--ink-tertiary); }
+    body.dark-mode input, body.dark-mode select { background: #374151; border-color: var(--border-default); color: var(--ink-main); }
+    body.dark-mode .range-ink::-webkit-slider-runnable-track { background: var(--border-default); }
+    body.dark-mode .range-ink::-moz-range-track { background: var(--border-default); }
+    body.dark-mode .range-ink::-webkit-slider-thumb { background: var(--theme-color); }
+    body.dark-mode .range-ink::-moz-range-thumb { background: var(--theme-color); }
+    body.dark-mode .bamboo-strip .bamboo-track { background: var(--bg-hover); }
+    body.dark-mode .chart-conclusion { background: rgba(255,255,255,0.04); }
+    body.dark-mode .report-modal { background: var(--bg-card); border-color: var(--border-default); }
+    body.dark-mode .report-modal .modal-close { background: var(--bg-hover); color: var(--ink-secondary); }
+    body.dark-mode .report-modal .modal-close:hover { color: var(--ink-main); }
+    body.dark-mode .bamboo-strip .bamboo-val { color: var(--theme-color); }
+
+    /* Notion 风格 · 简洁背景（极浅渐变） */
+    body {
+      background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+      color: var(--ink-main);
+      font-family: var(--font-body);
+      overflow: hidden;
+      height: 100vh;
+      position: relative;
+    }
+
+    .hud-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      position: relative;
+      z-index: 10;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      overflow: visible;
+    }
+    .hud-panel:hover {
+      border-color: var(--border-hover);
+    }
+    .hud-panel::before, .hud-panel::after { display: none; }
+
+    .sidebar {
+      width: 56px;
+      background: var(--bg-card);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 0;
+      z-index: 30;
+      position: fixed;
+      height: 100%;
+    }
+    .sidebar-icon {
+      width: 36px;
+      height: 36px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-tertiary);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: color 0.2s, background 0.2s, transform 0.2s;
+      border-radius: var(--radius-sm);
+    }
+    .sidebar-icon:hover { color: var(--ink-main); background: var(--bg-hover); transform: scale(1.05); }
+    .sidebar-icon.active { color: var(--theme-color); background: var(--theme-glow); position: relative; }
+    .sidebar-icon.active::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 20px; background: var(--theme-color); border-radius: 0 2px 2px 0; }
+
+    .top-bar {
+      height: 56px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: relative;
+      z-index: 30;
+    }
+    .plat-btn {
+      padding: 6px 12px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      font-weight: 500;
+      color: var(--ink-secondary);
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: color 0.2s, background 0.2s, transform 0.15s;
+      background: transparent;
+    }
+    .plat-btn:hover { color: var(--ink-main); background: var(--bg-hover); }
+    .plat-btn.active-platform { color: var(--theme-color); background: var(--theme-glow); box-shadow: 0 2px 0 0 var(--theme-color); }
+    .plat-btn:active { transform: scale(0.97); }
+    .dark-toggle {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--ink-tertiary);
+      cursor: pointer;
+      transition: color 0.2s, background 0.2s, border-color 0.2s;
+    }
+    .dark-toggle:hover { color: var(--ink-main); background: var(--bg-hover); border-color: var(--border-hover); }
+    body.dark-mode .dark-toggle { color: var(--ink-secondary); }
+    body.dark-mode .dark-toggle:hover { color: var(--ink-main); }
+
+    .title-font { font-family: var(--font-title); font-weight: 600; }
+    input, select {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      color: var(--ink-main);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      margin-top: 6px;
+    }
+    input:focus, select:focus {
+      border-color: var(--theme-color);
+      box-shadow: 0 0 0 2px var(--theme-glow);
+    }
+    .range-wrap { position: relative; display: flex; flex-direction: column; align-items: stretch; }
+    .range-ink {
+      width: 100%;
+      height: 16px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      outline: none;
+      padding: 0;
+      margin: 0;
+    }
+    .range-ink::-webkit-slider-runnable-track {
+      height: 6px;
+      background: var(--border-default);
+      border-radius: 3px;
+    }
+    .range-ink::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--theme-color);
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s;
+      position: relative;
+      top: -5px;
+    }
+    .range-ink::-webkit-slider-thumb:hover { transform: scale(1.1); }
+    .range-ink::-moz-range-track {
+      height: 6px;
+      background: var(--border-default);
+      border-radius: 3px;
+    }
+    .range-ink::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--theme-color);
+      border: none;
+      cursor: pointer;
+      position: relative;
+      top: -5px;
+    }
+    .range-ticks {
+      display: flex;
+      justify-content: space-between;
+      margin-top: -2px;
+      padding: 0 8px;
+      pointer-events: none;
+    }
+    .range-ticks span {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--ink-light);
+      opacity: 0.5;
+    }
+    .btn-primary {
+      background: var(--theme-color);
+      color: white;
+      padding: 10px 16px;
+      width: 100%;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, opacity 0.2s, transform 0.15s;
+      border: none;
+      margin-top: 10px;
+    }
+    .btn-primary:hover { background: var(--theme-color-dark); opacity: 0.95; }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--accent-red);
+      padding: 10px 16px;
+      width: 100%;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      margin-top: 10px;
+    }
+    .btn-danger:hover { background: rgba(239, 68, 68, 0.15); }
+    .btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* 右侧面板滚动（窗口高度不足时仍可滚） */
+    .right-rail {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      min-height: 0;
+      scrollbar-width: none;
+      padding-right: 6px;
+      overscroll-behavior: contain;
+    }
+    .right-rail::-webkit-scrollbar { display: none; }
+
+    .scrollbar-ink {
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-hover) transparent;
+    }
+    .scrollbar-ink::-webkit-scrollbar { width: 8px; height: 8px; }
+    .scrollbar-ink::-webkit-scrollbar-thumb {
+      background: var(--border-hover);
+      border-radius: 4px;
+    }
+    .scrollbar-ink::-webkit-scrollbar-track { background: transparent; }
+
+    #ink-canvas-container { display: none; }
+
+    /* 中间区域：顶=推演参数顶(56+28)，底=推演建议底，左右与侧边等距 */
+    .stage-wrap {
+      position: absolute;
+      top: 89px;
+      left: 80px;
+      right: 494px;
+      bottom: 32px;
+      z-index: 15;
+      pointer-events: auto;
+      padding: 0;
+    }
+    .scroll-stage { pointer-events: auto; height: 100%; display: flex; align-items: stretch; justify-content: center; }
+    .scroll { pointer-events: auto; width: 100%; height: 100%; position: relative; border-radius: var(--radius); overflow: visible; }
+    .scroll-axis { display: none; }
+
+    .scroll-paper {
+      pointer-events: auto;
+      position: absolute;
+      inset: 0;
+      margin: 0;
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      animation: parallaxBase 1.2s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+      opacity: 0;
+    }
+    .scroll-paper::before, .scroll-paper::after { display: none; }
+    @keyframes parallaxBase {
+      to { opacity: 1; }
+    }
+    @keyframes parallaxHeader {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes parallaxBody {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* 切换平台时重触发：先重置再播放 */
+    .stage-wrap.parallax-reset .scroll-paper { animation: none; opacity: 0; }
+    .stage-wrap.parallax-reset .scroll-header { animation: none; opacity: 0; transform: translateY(-16px); }
+    .stage-wrap.parallax-reset .scroll-body { animation: none; opacity: 0; transform: translateY(20px); }
+
+    .scroll-header {
+      padding: 16px 20px 12px;
+      animation: parallaxHeader 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) 0.15s forwards;
+      opacity: 0;
+      transform: translateY(-16px);
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .scroll-title {
+      font-family: var(--font-title);
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--ink-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .seal {
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      background: var(--theme-color);
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .seal-corner {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      background: var(--theme-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 12px;
+      z-index: 2;
+    }
+    .seal-corner-tr { top: 8px; right: 8px; }
+    .seal-corner-bl { bottom: 8px; left: 8px; }
+    .seal-inline { width: 18px; height: 18px; font-size: 10px; margin-left: 6px; vertical-align: middle; }
+    .scroll-sub { font-size: 12px; color: var(--ink-secondary); display: flex; gap: 12px; align-items: center; white-space: nowrap; }
+    .scroll-body {
+      height: calc(100% - 52px);
+      animation: parallaxBody 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) 0.35s forwards;
+      opacity: 0;
+      transform: translateY(20px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 16px 20px 20px;
+      overscroll-behavior: contain;
+    }
+    .to-bottom { position: sticky; bottom: 12px; margin-left: auto; width: fit-content; z-index: 5; pointer-events: auto; display: none; }
+    .to-bottom button {
+      border: 1px solid var(--border-default);
+      background: var(--bg-card);
+      color: var(--ink-main);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-family: var(--font-body);
+      font-weight: 500;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .to-bottom button:hover { border-color: var(--theme-color); background: var(--theme-glow); }
+
+    .post-card {
+      border: 1px solid var(--border-default);
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 16px;
+      position: relative;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border-left: 4px solid var(--theme-color);
+    }
+    .post-card:hover { border-color: var(--border-hover); box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
+    .post-card::before, .post-card::after { display: none; }
+    .post-meta { font-size: 12px; color: var(--ink-secondary); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: var(--bg-hover);
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 12px;
+      color: var(--ink-secondary);
+    }
+    .post-title { font-family: var(--font-title); font-weight: 600; font-size: 15px; color: var(--ink-main); }
+    .post-content { margin-top: 10px; font-size: 14px; line-height: 1.65; color: var(--ink-main); white-space: pre-wrap; }
+    .post-actions {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      gap: 20px;
+      font-size: 13px;
+      color: var(--ink-secondary);
+    }
+    .post-actions span { display: inline-flex; align-items: center; gap: 6px; cursor: default; transition: color 0.2s; }
+    .post-actions span:hover { color: var(--theme-color); }
+    .post-actions span:hover i { color: var(--theme-color); }
+    .post-actions i { font-size: 14px; color: var(--ink-tertiary); transition: color 0.2s; }
+    .post-actions .count { font-weight: 600; color: var(--ink-main); }
+    .utter-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--ink-tertiary);
+    }
+    .utter-actions span { display: inline-flex; align-items: center; gap: 4px; cursor: default; }
+    .utter-actions .count { font-weight: 500; color: var(--ink-secondary); }
+
+    .round-divider {
+      margin: 20px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--ink-secondary);
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 12px;
+    }
+    .round-divider::before, .round-divider::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      min-width: 20px;
+      background: var(--border-default);
+    }
+    .round-divider .divider-vertical {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      letter-spacing: 2px;
+      margin: 0 2px;
+    }
+    .page-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin: 16px 0 12px;
+      padding: 8px 0;
+    }
+    .page-nav.hidden { display: none; }
+    .page-nav-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border-default);
+      background: var(--bg-card);
+      color: var(--ink-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .page-nav-btn:hover:not(:disabled) { border-color: var(--theme-color); color: var(--theme-color); background: var(--theme-glow); }
+    .page-nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .page-info { font-size: 13px; font-weight: 500; color: var(--ink-secondary); }
+    .thread { margin-top: 12px; display: flex; flex-direction: column; gap: 12px; }
+
+    .utter-card {
+      border: 1px solid var(--border-default);
+      background: rgba(255,255,255,0.7);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 12px;
+      position: relative;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+    .utter-card:hover { border-color: var(--border-hover); box-shadow: 0 2px 8px rgba(0,0,0,0.06); transform: translateY(-1px); }
+    .utter-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--theme-color);
+      border-radius: var(--radius) 0 0 var(--radius);
+      opacity: 0.8;
+    }
+    .utter-card::after { display: none; }
+
+    .agent-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--bg-hover);
+      border: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .agent-avatar .sigil {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--theme-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-weight: 600;
+      color: var(--theme-color);
+      font-size: 11px;
+    }
+    .agent-avatar .stamp {
+      position: absolute;
+      right: -4px;
+      bottom: -4px;
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      background: var(--theme-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .utter-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+    .agent-name { font-family: var(--font-body); font-weight: 600; font-size: 13px; color: var(--ink-main); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .tag { font-size: 11px; color: var(--ink-secondary); background: var(--bg-hover); padding: 2px 8px; border-radius: 4px; font-weight: 500; }
+    .utter-meta { font-size: 11px; color: var(--ink-tertiary); white-space: nowrap; }
+    .utter-text { font-size: 14px; line-height: 1.65; color: var(--ink-main); white-space: pre-wrap; }
+    .quote { margin-top: 8px; border-left: 3px solid var(--border-default); padding-left: 12px; color: var(--ink-secondary); font-size: 13px; line-height: 1.6; background: var(--bg-hover); border-radius: 4px; padding: 8px 12px; }
+
+    /* 落笔方向 · 右上向左下淡入（模拟毛笔） */
+    @keyframes inkIn {
+      from {
+        opacity: 0;
+        transform: translate(12px, -8px);
+        filter: blur(1px);
+      }
+      to {
+        opacity: 1;
+        transform: translate(0, 0);
+        filter: blur(0);
+      }
+    }
+    .ink-in { animation: inkIn 320ms cubic-bezier(0.22, 1, 0.36, 1); }
+
+    .module { display: none; height: 100%; }
+    .module.active { display: block; animation: moduleFadeIn 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards; }
+    @keyframes moduleFadeIn { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
+
+    /* ========== 18 块滚轮切换布局 ========== */
+    .scroll-canvas {
+      position: absolute;
+      top: 56px;
+      bottom: 0;
+      left: 56px;
+      right: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-snap-type: y mandatory;
+      -webkit-overflow-scrolling: touch;
+      z-index: 5;
+    }
+    .canvas-section {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .content-viewport {
+      position: fixed;
+      top: 56px;
+      bottom: 0;
+      left: 56px;
+      right: 0;
+      z-index: 15;
+      pointer-events: auto;
+      display: flex;
+      justify-content: flex-end;
+      align-items: stretch;
+    }
+    .content-viewport > .viewport-inner {
+      pointer-events: auto;
+      width: 100%;
+      max-width: 438px;
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      overflow-y: auto;
+      background: linear-gradient(90deg, transparent 0%, var(--bg-page) 15%);
+    }
+    .content-viewport.mode-full .viewport-inner {
+      max-width: 100%;
+      padding: 28px 40px 60px;
+      background: var(--bg-page);
+    }
+    /* 推演纪要保持原位置：content-viewport 从 56px 起，故 stage 用 top:33px left:24px 等效原 89px 80px */
+    .content-viewport .stage-wrap {
+      top: 33px;
+      left: 24px;
+    }
+
+    /* 全屏模式：受众图鉴、全息图谱覆盖整页，无卷轴（参考 13 copy） */
+    body.mode-full .stage-wrap { display: none !important; }
+    body.mode-full #module-simulation { display: none !important; } /* 2、3 页不显示推演参数与情感指标 */
+    body.mode-full .content-wrapper { justify-content: stretch; }
+    body.mode-full .content-rail { max-width: none !important; width: 100% !important; }
+    body.mode-full #module-agents.active { display: flex !important; width: 100%; }
+    body.mode-full #module-analytics.active { display: block !important; width: 100%; overflow-y: auto; padding-right: 16px; padding-bottom: 60px; height: 100%; }
+
+    .chart-container { width: 100%; height: 100%; min-height: 250px; }
+    .chart-box { width: 100%; height: 380px; }
+    .analytics-title-vertical { display: none; }
+    .section-title { border-bottom: 1px solid var(--border-default); padding-bottom: 8px; }
+    .chart-panel .section-title { border-left: 3px solid var(--theme-color); padding-left: 12px; }
+    .section-label-vertical { display: none; }
+
+    .agent-card {
+      border: 1px solid var(--border-default);
+      background: var(--bg-card);
+      padding: 16px;
+      border-radius: var(--radius);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .agent-card { transition: all 0.25s; }
+    .agent-card:hover { border-color: var(--theme-color); box-shadow: 0 8px 22px var(--theme-glow); transform: translateY(-2px); }
+    .agent-card::before { display: none; }
+    .agent-tag {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--theme-color);
+      background: var(--theme-glow);
+      border: 1px solid var(--border-default);
+      margin-right: 6px;
+      margin-top: 4px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .agent-quote {
+      position: relative;
+      font-style: italic;
+    }
+    .agent-quote::before { content: '"'; font-size: 18px; color: var(--theme-color); opacity: 0.5; position: absolute; left: 4px; top: -2px; font-family: Georgia, serif; }
+    .agent-quote::after { content: '"'; font-size: 18px; color: var(--theme-color); opacity: 0.5; position: absolute; right: 4px; bottom: -2px; font-family: Georgia, serif; }
+
+    .kpi-card {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: all 0.25s;
+      min-width: 0;
+    }
+    .kpi-card::before, .kpi-card::after { display: none; }
+    .kpi-card:hover { border-color: var(--theme-color); box-shadow: 0 8px 22px var(--theme-glow); transform: translateY(-2px); }
+    .kpi-accent { color: var(--theme-color) !important; }
+    .kpi-card .text-2xl { animation: kpiNumReveal 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) backwards; }
+    #module-analytics.active .kpi-card:nth-child(1) .text-2xl { animation-delay: 0.45s; }
+    #module-analytics.active .kpi-card:nth-child(2) .text-2xl { animation-delay: 0.6s; }
+    #module-analytics.active .kpi-card:nth-child(3) .text-2xl { animation-delay: 0.75s; }
+    @keyframes kpiNumReveal { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .hud-panel.chart-panel { transition: all 0.25s; }
+    .hud-panel.chart-panel:hover { border-color: var(--theme-color); box-shadow: 0 8px 22px var(--theme-glow); transform: translateY(-2px); }
+    .chart-panel .chart-box {
+      background: linear-gradient(180deg, var(--bg-page) 0%, rgba(248,250,252,0.6) 100%);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius);
+      margin-top: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .chart-panel .chart-box::before { display: none; }
+
+    /* ==================== 全息图谱 · 国风动效 ==================== */
+    /* 画卷展开 · 页入场（第二页、第三页共用） */
+    #module-analytics.active .analytics-content.analytics-animate,
+    #module-agents.active .agents-content.analytics-animate {
+      animation: analyticsUnfold 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    }
+    #module-agents .agents-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    /* 智能体画像卡片 · 依次入场 */
+    #module-agents.active .agent-card {
+      animation: agentCardReveal 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    #module-agents.active .agent-card:nth-child(1) { animation-delay: 0.25s; }
+    #module-agents.active .agent-card:nth-child(2) { animation-delay: 0.35s; }
+    #module-agents.active .agent-card:nth-child(3) { animation-delay: 0.45s; }
+    #module-agents.active .agent-card:nth-child(4) { animation-delay: 0.55s; }
+    #module-agents.active .agent-card:nth-child(5) { animation-delay: 0.65s; }
+    #module-agents.active .agent-card:nth-child(6) { animation-delay: 0.75s; }
+    #module-agents.active .agent-card:nth-child(n+7) { animation-delay: 0.85s; }
+    @keyframes agentCardReveal {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* 切换平台时重触发 agent 卡片动画 */
+    .agents-content.agents-reset .agent-card { animation: none !important; opacity: 0; transform: translateY(16px); }
+    /* 第二页：轻微背景渐变 */
+    .agents-page .agents-panel { background: linear-gradient(180deg, var(--bg-card) 0%, rgba(248,250,252,0.95) 100%); }
+    @keyframes analyticsUnfold {
+      0% { clip-path: inset(0 40% 0 40%); opacity: 0.4; }
+      100% { clip-path: inset(0 0 0 0); opacity: 1; }
+    }
+
+    /* 图表面板 · 依次浮现（与特征重要性竹简一致，每个图表都有入场动画） */
+    #module-analytics.active .chart-panel {
+      animation: chartPanelReveal 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    #module-analytics.active .grid .chart-panel:nth-child(1) { animation-delay: 0.2s; }
+    #module-analytics.active .grid .chart-panel:nth-child(2) { animation-delay: 0.35s; }
+    #module-analytics.active .grid .chart-panel:nth-child(3) { animation-delay: 0.5s; }
+    #module-analytics.active .grid .chart-panel:nth-child(4) { animation-delay: 0.65s; }
+    #module-analytics.active .chart-panel.mb-10 { animation-delay: 0.8s; }
+    @keyframes chartPanelReveal {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* KPI 卡片 · 依次浮现 */
+    #module-analytics.active .kpi-card {
+      animation: kpiReveal 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    #module-analytics.active .kpi-card:nth-child(1) { animation-delay: 0.2s; }
+    #module-analytics.active .kpi-card:nth-child(2) { animation-delay: 0.35s; }
+    #module-analytics.active .kpi-card:nth-child(3) { animation-delay: 0.5s; }
+    @keyframes kpiReveal {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 竹简进度条 */
+    .bamboo-chart {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 28px;
+      padding: 24px 28px !important;
+    }
+    .bamboo-strip {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      animation: bambooReveal 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    }
+    .bamboo-strip:nth-child(1) { animation-delay: 0.15s; }
+    .bamboo-strip:nth-child(2) { animation-delay: 0.28s; }
+    .bamboo-strip:nth-child(3) { animation-delay: 0.41s; }
+    .bamboo-strip:nth-child(4) { animation-delay: 0.54s; }
+    .bamboo-strip:nth-child(5) { animation-delay: 0.67s; }
+    @keyframes bambooReveal {
+      from { opacity: 0; transform: translateX(-12px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .bamboo-strip .bamboo-label {
+      width: 72px;
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 13px;
+      color: var(--ink-main);
+      flex-shrink: 0;
+    }
+    .bamboo-strip .bamboo-track {
+      flex: 1;
+      height: 10px;
+      background: var(--bg-hover);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .bamboo-strip .bamboo-track::before { display: none; }
+    .bamboo-strip .bamboo-fill {
+      height: 100%;
+      width: 0;
+      background: var(--theme-color);
+      border-radius: 4px;
+      animation: bambooFill 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    }
+    .bamboo-strip .bamboo-fill::after { display: none; }
+    .bamboo-strip:nth-child(1) .bamboo-fill { animation-delay: 0.25s; --bamboo-w: 82%; }
+    .bamboo-strip:nth-child(2) .bamboo-fill { animation-delay: 0.38s; --bamboo-w: 48%; }
+    .bamboo-strip:nth-child(3) .bamboo-fill { animation-delay: 0.51s; --bamboo-w: 25%; }
+    .bamboo-strip:nth-child(4) .bamboo-fill { animation-delay: 0.64s; --bamboo-w: 12%; }
+    .bamboo-strip:nth-child(5) .bamboo-fill { animation-delay: 0.77s; --bamboo-w: 7%; }
+    @keyframes bambooFill {
+      to { width: var(--bamboo-w, 50%); }
+    }
+    .bamboo-strip .bamboo-val {
+      width: 36px;
+      text-align: right;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--theme-color);
+      flex-shrink: 0;
+    }
+    /* 图表下方总结语（每个大框单独一条） */
+    .chart-conclusion {
+      margin-top: 12px;
+      padding: 12px 14px 12px 16px;
+      border-top: 1px solid var(--border-default);
+      border-left: 3px solid var(--theme-color);
+      background: var(--bg-hover);
+      border-radius: 0 4px 4px 0;
+      font-size: 12px;
+      color: var(--ink-secondary);
+      font-family: var(--font-body);
+      line-height: 1.5;
+    }
+
+    /* 印章阵 */
+    .seal-grid-wrap {
+      display: grid !important;
+      grid-template-columns: 56px repeat(6, 1fr);
+      grid-template-rows: 28px repeat(4, 1fr);
+      gap: 10px;
+      padding: 16px !important;
+    }
+    .seal-grid-wrap .seal-x-labels {
+      grid-column: 2 / -1;
+      grid-row: 1;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      font-size: 11px;
+      color: var(--ink-light);
+      font-family: var(--font-title);
+      font-weight: 700;
+      align-items: center;
+      text-align: center;
+    }
+    .seal-grid-wrap .seal-y-labels {
+      grid-column: 1;
+      grid-row: 2 / -1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      font-size: 11px;
+      color: var(--ink-light);
+      font-family: var(--font-title);
+      font-weight: 700;
+    }
+    .seal-grid-wrap .seal-cells {
+      grid-column: 2 / -1;
+      grid-row: 2 / -1;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .seal-grid-wrap .seal-cell {
+      border-radius: 8px;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-title);
+      font-weight: 900;
+      font-size: 12px;
+      color: rgba(255,255,255,0.95);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      opacity: 0;
+      transform: scale(0.2);
+      animation: sealStamp 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      border: 2px solid rgba(255,255,255,0.5);
+      position: relative;
+    }
+    .seal-grid-wrap .seal-cell::before {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 6px;
+      pointer-events: none;
+    }
+    @keyframes sealStamp {
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* 图表面板 · 依次浮现 */
+    #module-analytics.active .chart-panel {
+      animation: chartPanelReveal 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    #module-analytics.active .grid .chart-panel:nth-child(1) { animation-delay: 0.45s; }
+    #module-analytics.active .grid .chart-panel:nth-child(2) { animation-delay: 0.55s; }
+    #module-analytics.active .grid .chart-panel:nth-child(3) { animation-delay: 0.65s; }
+    #module-analytics.active .grid .chart-panel:nth-child(4) { animation-delay: 0.75s; }
+    #module-analytics.active .hud-panel.chart-panel.mb-10 { animation-delay: 0.85s; }
+    @keyframes chartPanelReveal {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 首页右侧三块面板：标题图标随平台主题色，稍深一点 */
+    .section-icon-theme {
+      color: var(--theme-color-dark);
+      transition: color 0.5s ease;
+    }
+    /* 首页右侧三块面板：与图表面板统一的悬浮动效（随平台主题色） */
+    #module-simulation .hud-panel {
+      transition: all 0.25s;
+    }
+    #module-simulation .hud-panel:hover {
+      border-color: var(--theme-color);
+      box-shadow: 0 8px 22px var(--theme-glow);
+      transform: translateY(-2px);
+    }
+
+    /* 推演建议报告区：动态伸缩，与卷轴一致（随视窗变化） */
+    .report-panel { flex: 1 1 0; min-height: 0; }
+    .report-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 80px; text-align: center; }
+    .report-empty-icon { font-size: 28px; color: var(--ink-tertiary); opacity: 0.5; }
+    /* 首页右侧栏：与卷轴同高同底，推演建议自动拉高填满 */
+    body:not(.mode-full) .content-wrapper {
+      position: absolute;
+      top: 56px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 28px 32px 28px 32px !important;
+      height: auto !important;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: stretch;
+      align-items: flex-end;  /* 右侧栏靠右 */
+    }
+    body:not(.mode-full) .content-rail {
+      flex: 1 1 0;
+      min-height: 0;
+      width: 438px;   /* 固定宽度，靠右显示 */
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-self: flex-end;
+      overflow: hidden;
+      padding: 4px 0;    /* 为悬浮 translateY(-2px) 留出空间，避免被裁剪 */
+    }
+    body:not(.mode-full) #module-simulation {
+      flex: 1 1 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* 报告点击放大 · 弹窗 */
+    .report-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(55, 53, 47, 0.4);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      pointer-events: none;
+    }
+    .report-modal-overlay.active { display: flex; pointer-events: auto; }
+    .report-modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius);
+      max-width: 560px;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 24px 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      position: relative;
+    }
+    .report-modal .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: var(--bg-hover);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--ink-secondary);
+      transition: all 0.2s;
+    }
+    .report-modal .modal-close:hover { background: var(--bg-hover); color: var(--ink-main); }
+  </style>
+</head>
+<body>
+
+  <!-- 水墨动态背景 -->
+  <div id="ink-canvas-container">
+    <canvas id="ink-canvas"></canvas>
+  </div>
+
+  <!-- 18 块滚轮画布：平台优先 贴吧×3 → 微博×3 → 知乎×3 → 小红书×3 → 抖音×3 → B站×3 -->
+  <div class="scroll-canvas" id="scroll-canvas">
+    <div class="canvas-section" data-idx="0" data-platform="tieba" data-module="simulation"></div>
+    <div class="canvas-section" data-idx="1" data-platform="tieba" data-module="agents"></div>
+    <div class="canvas-section" data-idx="2" data-platform="tieba" data-module="analytics"></div>
+    <div class="canvas-section" data-idx="3" data-platform="weibo" data-module="simulation"></div>
+    <div class="canvas-section" data-idx="4" data-platform="weibo" data-module="agents"></div>
+    <div class="canvas-section" data-idx="5" data-platform="weibo" data-module="analytics"></div>
+    <div class="canvas-section" data-idx="6" data-platform="zhihu" data-module="simulation"></div>
+    <div class="canvas-section" data-idx="7" data-platform="zhihu" data-module="agents"></div>
+    <div class="canvas-section" data-idx="8" data-platform="zhihu" data-module="analytics"></div>
+    <div class="canvas-section" data-idx="9" data-platform="xiaohongshu" data-module="simulation"></div>
+    <div class="canvas-section" data-idx="10" data-platform="xiaohongshu" data-module="agents"></div>
+    <div class="canvas-section" data-idx="11" data-platform="xiaohongshu" data-module="analytics"></div>
+    <div class="canvas-section" data-idx="12" data-platform="douyin" data-module="simulation"></div>
+    <div class="canvas-section" data-idx="13" data-platform="douyin" data-module="agents"></div>
+    <div class="canvas-section" data-idx="14" data-platform="douyin" data-module="analytics"></div>
+    <div class="canvas-section" data-idx="15" data-platform="bilibili" data-module="simulation"></div>
+    <div class="canvas-section" data-idx="16" data-platform="bilibili" data-module="agents"></div>
+    <div class="canvas-section" data-idx="17" data-platform="bilibili" data-module="analytics"></div>
+  </div>
+
+  <!-- 内容 overlay（随滚动更新显示） -->
+  <div class="content-viewport" id="content-viewport">
+    <div class="stage-wrap" id="stage-wrap">
+    <div class="scroll-stage">
+      <div class="scroll">
+        <div class="scroll-axis scroll-axis-left"></div>
+        <div class="scroll-axis scroll-axis-right"></div>
+        <div class="scroll-paper">
+          <div class="scroll-header">
+            <div class="scroll-title">
+              <span class="seal">章</span>
+              <span>推演紀要 · 卷</span>
+            </div>
+            <div class="scroll-sub">
+              <span id="scroll-platform" class="chip"><i class="fas fa-feather-alt"></i> 贴吧</span>
+              <span id="scroll-model" class="chip"><i class="fas fa-brain"></i> DeepSeek</span>
+              <span id="scroll-rounds" class="chip"><i class="fas fa-layer-group"></i> 10 帖</span>
+            </div>
+          </div>
+          <div class="scroll-body scrollbar-ink" id="scroll-body">
+            <div class="post-card ink-in" id="post-card">
+              <span class="seal-corner seal-corner-tr">推</span>
+              <div class="post-meta">
+                <span class="chip"><i class="fas fa-compass"></i> 话题</span>
+                <span class="chip" id="post-topic-chip">非遗数字化传承与现代重构</span>
+                <span class="chip"><i class="fas fa-hourglass-half"></i> 状态</span>
+                <span class="chip" id="post-status-chip" style="color: var(--ink-light);">静候指令</span>
+              </div>
+              <div class="post-title" id="post-title">标题：非遗数字化，是“活化”还是“消解”？</div>
+              <div class="post-content" id="post-content">正文：当传统技艺被短视频与AIGC重新编排，受众的认同与抵触会如何分化？欢迎从“传承价值、审美体验、商业边界”三条线索展开讨论。</div>
+              <div class="post-actions" id="post-actions"></div>
+            </div>
+
+            <div class="round-divider" id="hint-divider" title="推演状态">
+              <span class="seal-corner seal-corner-bl">卷</span>
+              <span id="hint-divider-text">未开卷 · 待落墨</span>
+            </div>
+            <div id="page-nav" class="page-nav hidden">
+              <button type="button" id="btn-page-prev" class="page-nav-btn" title="上一帖"><i class="fas fa-chevron-left"></i></button>
+              <span id="page-info" class="page-info">第 1 帖 / 共 1 帖</span>
+              <button type="button" id="btn-page-next" class="page-nav-btn" title="下一帖"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="thread" id="thread"></div>
+            <div class="to-bottom" id="btn-to-bottom">
+              <button type="button"><i class="fas fa-arrow-down mr-2"></i>回到底部</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="viewport-inner right-rail scrollbar-ink min-h-0 content-rail" id="viewport-inner" style="flex:1 1 0; display:flex; flex-direction:column; gap:24px; overflow-y:auto; padding:4px 0; width:100%; max-width:438px; align-self:flex-end;">
+    <!-- 模块由下方 content-rail 克隆，滚动时切换显示 -->
+  </div>
+  </div>
+  <!-- /content-viewport -->
+
+  <!-- 左侧导航（3、4、5 已合并为「全息图谱」） -->
+  <div class="sidebar">
+    <div class="font-semibold text-lg mb-6" style="color: var(--theme-color);">⋮</div>
+    <div class="sidebar-icon active" data-module="simulation" title="推演沙盘"><i class="fas fa-sliders-h"></i></div>
+    <div class="sidebar-icon" data-module="agents" title="受众图鉴"><i class="fas fa-users"></i></div>
+    <div class="sidebar-icon" data-module="analytics" title="全息图谱"><i class="fas fa-project-diagram"></i></div>
+  </div>
+
+  <div class="ml-[56px] h-full flex flex-col relative z-20 pointer-events-none">
+    <div class="top-bar pointer-events-auto">
+      <div class="flex items-center gap-6">
+        <span class="title-font text-lg tracking-widest font-bold" style="color: var(--ink-main);">
+          文化受众 · <span style="color: var(--theme-color); transition: color 0.5s;" id="platform-name">天机矩阵</span>
+        </span>
+        <div class="flex gap-2" id="platform-switches">
+          <button class="plat-btn active-platform" data-platform="tieba" data-color="var(--color-tieba)" data-name="贴吧">贴吧</button>
+          <button class="plat-btn" data-platform="weibo" data-color="var(--color-weibo)" data-name="微博">微博</button>
+          <button class="plat-btn" data-platform="zhihu" data-color="var(--color-zhihu)" data-name="知乎">知乎</button>
+          <button class="plat-btn" data-platform="xiaohongshu" data-color="var(--color-xhs)" data-name="小红书">小红书</button>
+          <button class="plat-btn" data-platform="douyin" data-color="var(--color-douyin)" data-name="抖音">抖音</button>
+          <button class="plat-btn" data-platform="bilibili" data-color="var(--color-bilibili)" data-name="B站">B站</button>
+        </div>
+      </div>
+      <div class="flex items-center gap-8">
+        <div class="flex gap-8 text-sm font-bold title-font" style="color: var(--ink-light);">
+          <div>话题气脉: <span style="color: var(--theme-color); font-size: 1.2rem; transition: color 0.5s;" id="val-nodes">12,049</span></div>
+          <div>引擎状态: <span style="color: #52c41a;"><i class="fas fa-plug"></i> 灵台已连</span></div>
+        </div>
+        <button type="button" id="dark-mode-toggle" class="dark-toggle" title="切换暗色模式">
+          <i class="fas fa-moon" id="dark-mode-icon"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 【【【首页尺寸可改 10/12】】】右侧面板：下方 div 的 max-w-[420px] 改数字可调面板宽度；上方 div 的 p-8 改 p-6/p-10 等可调整体内边距 -->
+    <div class="flex-1 p-8 flex justify-end min-h-0 content-wrapper" style="pointer-events: none;">
+      <div class="w-full max-w-[438px] h-full flex flex-col gap-6 right-rail scrollbar-ink min-h-0 content-rail pointer-events-auto">
+
+        <!-- SECTION: 首页 · 推演参数设定（右侧顶部面板） -->
+        <div id="module-simulation" class="module active h-full flex flex-col gap-6">
+
+          <!-- 【【【首页尺寸可改 11/12】】】推演参数面板：p-6=内边距，text-[16px]=标题字号 -->
+          <div class="hud-panel p-6 shrink-0">
+            <h3 class="section-title title-font text-[16px] mb-5 pb-3" style="color: var(--ink-main);">
+              <span class="section-label-vertical">參</span>
+              <i class="fas fa-cogs mr-2 section-icon-theme"></i>推演参数设定
+              <span class="seal seal-inline">設</span>
+            </h3>
+
+            <div class="space-y-5">
+              <div>
+                <label class="block text-[13px] font-bold" style="color: var(--ink-light);">演化话题 (Topic)</label>
+                <input type="text" id="ctrl-topic" value="非遗数字化传承与现代重构" placeholder="请输入你要推演的话题...">
+              </div>
+
+              <div id="discussion-row" class="hidden"><!-- 仅当删除预设、自己输入话题后显示 -->
+                <label class="block text-[13px] font-bold" style="color: var(--ink-light);">讨论内容</label>
+                <input type="text" id="ctrl-discussion" placeholder="请输入讨论内容...">
+              </div>
+
+              <div>
+                <label class="block text-[13px] font-bold" style="color: var(--ink-light);">承载大模型 (LLM Backend)</label>
+                <select id="ctrl-model">
+                  <option value="qwen">通义千问 </option>
+                  <option value="doubao">火山方舟 </option>
+                  <option value="deepseek" selected>DeepSeek </option>
+                </select>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-[13px] font-bold" style="color: var(--ink-light);">
+                  <label>推演帖子数 (Posts)</label>
+                  <span id="rounds-val" style="color: var(--theme-color)">10 帖</span>
+                </div>
+                <div class="range-wrap mt-3">
+                  <input type="range" id="ctrl-rounds" min="1" max="50" value="10" class="range-ink">
+                  <div class="range-ticks" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <button id="btn-start" class="btn-primary"><i class="fas fa-play mr-2"></i>开启推演</button>
+                <button id="btn-stop" class="btn-danger" disabled><i class="fas fa-hand mr-2"></i>终止推演</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 【【【首页尺寸可改 11/12】】】推演真实性考究面板 -->
+          <div class="hud-panel p-6 shrink-0" style="position:relative;">
+            <h3 class="section-title title-font text-[16px] mb-5 pb-3" style="color: var(--ink-main);">
+              <span class="section-label-vertical">究</span>
+              <i class="fas fa-check-double mr-2 section-icon-theme"></i>推演真实性考究
+              <span class="seal seal-inline">似</span>
+            </h3>
+            <div class="space-y-4">
+              <div>
+                <div class="flex justify-between text-[13px] title-font" style="color: var(--ink-main);">
+                  <span>评论语义相似度 (Sim)</span>
+                  <span class="font-bold font-sans" id="metric-sim">0.00</span>
+                </div>
+                <div class="h-[6px] bg-[rgba(0,0,0,0.06)] rounded overflow-hidden mt-2">
+                  <div class="h-full" id="bar-sim" style="width:0%; background: var(--theme-color); transition: width 0.5s ease-out;"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-[13px] title-font" style="color: var(--ink-main);">
+                  <span>风格一致性 (Style)</span>
+                  <span class="font-bold font-sans" id="metric-style">0.0%</span>
+                </div>
+                <div class="h-[6px] bg-[rgba(0,0,0,0.06)] rounded overflow-hidden mt-2">
+                  <div class="h-full" id="bar-style" style="width:0%; background: var(--color-weibo); transition: width 0.5s ease-out;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 【【【首页尺寸可改 12/12】】】推演建议面板 -->
+          <div class="hud-panel p-6 flex-1 min-h-0 flex flex-col overflow-hidden report-panel">
+            <h3 class="section-title title-font text-[16px] mb-5 pb-3 shrink-0 flex items-center justify-between gap-2" style="color: var(--ink-main);">
+              <span><span class="section-label-vertical">議</span><i class="fas fa-scroll mr-2 section-icon-theme"></i>推演建议<span class="seal seal-inline">報</span></span>
+              <button type="button" id="btn-download-report" class="text-[12px] px-2 py-1 rounded border border-[rgba(0,0,0,0.12)] hover:border-[var(--theme-color)] transition-colors shrink-0" title="下载报告"><i class="fas fa-download mr-1"></i>下载</button>
+            </h3>
+            <!-- report-area：与推演参数设定一致，正文 text-[13px] -->
+            <div id="report-area" class="flex-1 overflow-y-auto scrollbar-ink text-[13px] leading-relaxed cursor-pointer report-click-expand" style="color: var(--ink-light); min-height: 60px; pointer-events: auto;" title="点击放大查看全文">
+              <p class="report-placeholder" id="report-placeholder">
+                <span class="report-empty-icon"><i class="fas fa-file-alt"></i></span>
+                推演完成后，将根据多智能体讨论结果生成策略建议。
+                <br><span class="text-[11px] opacity-70">（点击此处可放大查看）</span>
+              </p>
+              <div id="report-content" class="hidden"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION: 受众画像录模块（全屏时覆盖整页，画卷展开入场） -->
+        <div id="module-agents" class="module h-full overflow-y-auto scrollbar-ink min-h-0 agents-page">
+          <div id="agents-content" class="agents-content analytics-animate">
+          <div class="hud-panel p-8 flex-1 overflow-y-auto scrollbar-ink min-h-0 agents-panel">
+            <h3 class="section-title title-font text-[22px] mb-8 pb-4" style="color: var(--ink-main);">
+              <span class="section-label-vertical">錄</span>
+              <i class="fas fa-users mr-3 section-icon-theme"></i>多智能体画像录
+              <span class="seal seal-inline">錄</span>
+            </h3>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-8" id="agentsGrid"></div>
+          </div>
+          </div>
+        </div>
+
+        <!-- SECTION: 全息图谱（全屏时覆盖整页，画卷展开入场） -->
+        <div id="module-analytics" class="module h-full overflow-y-auto scrollbar-ink min-h-0">
+          <div id="analytics-content" class="analytics-content analytics-animate">
+          <div class="mb-6 title-font text-xl font-bold flex items-center gap-3" style="color: var(--ink-main); position: relative;">
+            <span style="color: var(--theme-color);">全息</span>
+            <span>推演数据图谱</span>
+            <span class="seal seal-inline" style="margin-left: 4px;">譜</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 kpi-grid">
+            <div class="kpi-card">
+              <div class="text-xs title-font mb-2" style="color: var(--ink-light);">训练集 MAE (内测)</div>
+              <div class="text-2xl font-bold font-sans" style="color: var(--ink-main);">12.34 <span class="text-sm ml-1 font-medium kpi-accent"><i class="fas fa-arrow-down"></i> 2.1%</span></div>
+            </div>
+            <div class="kpi-card">
+              <div class="text-xs title-font mb-2" style="color: var(--ink-light);">测试集 MAE (盲测)</div>
+              <div class="text-2xl font-bold font-sans" style="color: var(--ink-main);">15.71 <span class="text-sm ml-1 font-medium kpi-accent"><i class="fas fa-arrow-down"></i> 1.5%</span></div>
+            </div>
+            <div class="kpi-card">
+              <div class="text-xs title-font mb-2" style="color: var(--ink-light);">R² Score (拟合优度)</div>
+              <div class="text-2xl font-bold font-sans" style="color: var(--ink-main);">0.885</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="hud-panel p-6 chart-panel">
+              <h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2">
+                <i class="fas fa-signal mr-2 section-icon-theme"></i>特征重要性 (RF)
+              </h3>
+              <div id="chart-rf" class="chart-box bamboo-chart"></div>
+              <div class="chart-conclusion">语义分析是核心驱动力，文本语义与表达风格对受众分类贡献最大；观点、复杂度与行为特征可作为辅助研判依据。</div>
+            </div>
+            <div class="hud-panel p-6 chart-panel">
+              <h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2">
+                <i class="fas fa-chart-bar mr-2 section-icon-theme"></i>核心能力分布 (Faction Radar)
+              </h3>
+              <div id="chart-radar" class="chart-box"></div>
+              <div class="chart-conclusion">极化程度与裂变率较高，情绪强度突出，互动深度与商业转化仍有提升空间。</div>
+            </div>
+            <div class="hud-panel p-6 chart-panel">
+              <h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2">
+                <i class="fas fa-dot-circle mr-2 section-icon-theme"></i>内测集验证
+              </h3>
+              <div id="chart-val1" class="chart-box"></div>
+              <div class="chart-conclusion">内测集真实域与推演域拟合良好，模型在训练数据上表现稳定。</div>
+            </div>
+            <div class="hud-panel p-6 chart-panel">
+              <h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2">
+                <i class="fas fa-gem mr-2 section-icon-theme"></i>盲测集验证
+              </h3>
+              <div id="chart-val2" class="chart-box"></div>
+              <div class="chart-conclusion">盲测集验证显示模型具备一定泛化能力，部分样本存在偏差，可进一步优化。</div>
+            </div>
+          </div>
+
+          <div class="hud-panel p-6 mb-10 chart-panel">
+            <h3 class="section-title title-font text-[15px] mb-4 pb-2 flex items-center gap-2">
+              <i class="fas fa-th mr-2 section-icon-theme"></i>派系情感热力图 (Emotion Field)
+            </h3>
+            <div id="chart-heat" class="chart-box" style="height: 400px;"></div>
+            <div class="chart-conclusion">不同派系对各类文化形态的情感强度存在明显差异，原教旨与大众在茶道、汉服等维度表现突出。</div>
+          </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 推演建议放大弹窗 -->
+  <div id="report-modal-overlay" class="report-modal-overlay">
+    <div class="report-modal pointer-events-auto" onclick="event.stopPropagation()">
+      <button type="button" class="modal-close" id="report-modal-close" aria-label="关闭"><i class="fas fa-times"></i></button>
+      <h3 class="title-font text-lg mb-4" style="color: var(--ink-main);">推演建议 · 全文</h3>
+      <div id="report-modal-body" class="text-[14px] leading-relaxed" style="color: var(--ink-light);"></div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // 状态
+    // ============================================================
+    const state = {
+      platform: "tieba",
+      platformName: "贴吧",
+      topic: "非遗数字化传承与现代重构",
+      discussion: "",  /* 讨论内容 */
+      model: "deepseek",
+      modelName: "DeepSeek",
+      rounds: 10,
+      isRunning: false,
+      round: 0,
+      pages: [],       /* 每帖一页：[{ post, replies, actions }] */
+      currentPage: 1,
+      userHasNavigated: false,  /* 用户是否手动翻页；未手动则自动跟随新帖 */
+    };
+
+    // DOM
+    const ctrlTopic = document.getElementById('ctrl-topic');
+    const ctrlDiscussion = document.getElementById('ctrl-discussion');
+
+    const TOPIC_PRESETS = ['非遗数字化传承与现代重构', '国风审美与年轻世代', '传统文化IP的商业转化'];
+    const ctrlModel = document.getElementById('ctrl-model');
+    const ctrlRounds = document.getElementById('ctrl-rounds');
+    const roundsVal = document.getElementById('rounds-val');
+    const btnStart = document.getElementById('btn-start');
+    const btnStop = document.getElementById('btn-stop');
+
+    const postTopicChip = document.getElementById('post-topic-chip');
+    const postStatusChip = document.getElementById('post-status-chip');
+    const postTitle = document.getElementById('post-title');
+    const postContent = document.getElementById('post-content');
+
+    const scrollPlatform = document.getElementById('scroll-platform');
+    const scrollModel = document.getElementById('scroll-model');
+    const scrollRounds = document.getElementById('scroll-rounds');
+    const thread = document.getElementById('thread');
+    const hintDivider = document.getElementById('hint-divider');
+    const hintDividerText = document.getElementById('hint-divider-text');
+    const pageNav = document.getElementById('page-nav');
+    const pageInfo = document.getElementById('page-info');
+    const btnPagePrev = document.getElementById('btn-page-prev');
+    const btnPageNext = document.getElementById('btn-page-next');
+    const scrollBodyEl = document.getElementById('scroll-body');
+    const btnToBottomWrap = document.getElementById('btn-to-bottom');
+    const btnToBottom = btnToBottomWrap ? btnToBottomWrap.querySelector('button') : null;
+
+    // 暗色模式
+    const DARK_STORAGE_KEY = '15notion-dark-mode';
+    const darkToggle = document.getElementById('dark-mode-toggle');
+    const darkIcon = document.getElementById('dark-mode-icon');
+    function applyDarkMode(isDark) {
+      if (isDark) {
+        document.body.classList.add('dark-mode');
+        if (darkIcon) { darkIcon.className = 'fas fa-sun'; }
+        if (darkToggle) darkToggle.title = '切换浅色模式';
+      } else {
+        document.body.classList.remove('dark-mode');
+        if (darkIcon) { darkIcon.className = 'fas fa-moon'; }
+        if (darkToggle) darkToggle.title = '切换暗色模式';
+      }
+      try { localStorage.setItem(DARK_STORAGE_KEY, isDark ? '1' : '0'); } catch (e) {}
+      if (typeof renderCharts === 'function') renderCharts();
+    }
+    if (darkToggle) {
+      darkToggle.addEventListener('click', () => {
+        const isDark = !document.body.classList.contains('dark-mode');
+        applyDarkMode(isDark);
+      });
+    }
+    try {
+      const saved = localStorage.getItem(DARK_STORAGE_KEY);
+      if (saved === '1') applyDarkMode(true);
+    } catch (e) {}
+
+    // 各平台帖子互动指标
+    const PLATFORM_POST_ACTIONS = {
+      tieba: [
+        { icon: 'far fa-thumbs-up', label: '赞', key: 'likes' },
+        { icon: 'far fa-comment', label: '回复', key: 'replies' },
+      ],
+      weibo: [
+        { icon: 'far fa-thumbs-up', label: '赞', key: 'likes' },
+        { icon: 'fas fa-share', label: '转发', key: 'shares' },
+        { icon: 'far fa-comment', label: '评论', key: 'comments' },
+      ],
+      zhihu: [
+        { icon: 'far fa-thumbs-up', label: '支持', key: 'agrees' },
+        { icon: 'far fa-comment', label: '评论', key: 'comments' },
+        { icon: 'far fa-bookmark', label: '收藏', key: 'favs' },
+      ],
+      xiaohongshu: [
+        { icon: 'far fa-thumbs-up', label: '赞', key: 'likes' },
+        { icon: 'far fa-bookmark', label: '收藏', key: 'favs' },
+        { icon: 'far fa-comment', label: '评论', key: 'comments' },
+      ],
+      douyin: [
+        { icon: 'far fa-thumbs-up', label: '赞', key: 'likes' },
+        { icon: 'far fa-bookmark', label: '收藏', key: 'favs' },
+        { icon: 'far fa-comment', label: '评论', key: 'comments' },
+      ],
+      bilibili: [
+        { icon: 'far fa-thumbs-up', label: '赞', key: 'likes' },
+        { icon: 'fas fa-coins', label: '投币', key: 'coins' },
+        { icon: 'far fa-bookmark', label: '收藏', key: 'favs' },
+      ],
+    };
+    function renderPostActions(platform) {
+      const container = document.getElementById('post-actions');
+      if (!container) return;
+      const actions = PLATFORM_POST_ACTIONS[platform] || PLATFORM_POST_ACTIONS.tieba;
+      container.innerHTML = actions.map(a => `
+        <span><i class="${a.icon}"></i> <span class="count" id="post-${a.key}">0</span> ${a.label}</span>
+      `).join('');
+    }
+
+    // ============================================================
+    // 平台切换（主题色 + 左侧卷轴chip）
+    // ============================================================
+    const platformBtns = document.querySelectorAll('.plat-btn');
+    // 平台按钮点击改为滚动到对应平台首块（由下方 18 块滚轮逻辑统一处理）
+
+    // ============================================================
+    // 参数变化 -> 更新卷轴头
+    // ============================================================
+    const discussionRow = document.getElementById('discussion-row');
+    function updateTopicFromUI() {
+      state.topic = ctrlTopic.value.trim();
+      postTopicChip.innerText = state.topic || '（未填写）';
+    }
+    function toggleDiscussionRow() {
+      /* 仅当删除预设、自己输入话题后显示讨论内容（当前值不在预设列表中） */
+      const val = ctrlTopic.value.trim();
+      const isCustomInput = val.length > 0 && !TOPIC_PRESETS.includes(val);
+      if (isCustomInput) {
+        discussionRow.classList.remove('hidden');
+      } else {
+        discussionRow.classList.add('hidden');
+        state.discussion = '';
+        if (ctrlDiscussion) ctrlDiscussion.value = '';
+      }
+    }
+    ctrlTopic.addEventListener('input', () => {
+      updateTopicFromUI();
+      toggleDiscussionRow();
+    });
+    ctrlDiscussion.addEventListener('input', (e) => {
+      state.discussion = e.target.value;
+    });
+    ctrlRounds.addEventListener('input', (e) => {
+      state.rounds = parseInt(e.target.value);
+      roundsVal.innerText = `${state.rounds} 帖`;
+      scrollRounds.innerHTML = `<i class="fas fa-layer-group"></i> ${state.rounds} 帖`;
+    });
+    ctrlModel.addEventListener('change', (e) => {
+      state.model = e.target.value;
+      state.modelName = (ctrlModel.options[ctrlModel.selectedIndex]?.text || 'LLM').split(' ')[0];
+      scrollModel.innerHTML = `<i class="fas fa-brain"></i> ${state.modelName}`;
+    });
+
+    // 初始化显示
+    updateTopicFromUI();
+    toggleDiscussionRow();  /* 预设时隐藏讨论内容 */
+    scrollRounds.innerHTML = `<i class="fas fa-layer-group"></i> ${state.rounds} 帖`;
+    scrollModel.innerHTML = `<i class="fas fa-brain"></i> ${state.modelName}`;
+    renderPostActions(state.platform);
+
+    // ============================================================
+    // 结构化“论坛式”假数据（后面接后端时替换这里）
+    // ============================================================
+    const agents = [
+      { id: "P0", name: "守成派", group: "原教旨", stance: "守正", stamp: "守" },
+      { id: "P1", name: "破壁派", group: "革新派", stance: "融合", stamp: "新" },
+      { id: "P2", name: "考据派", group: "考据党", stance: "溯源", stamp: "考" },
+      { id: "P3", name: "日常派", group: "大众", stance: "体验", stamp: "俗" },
+      { id: "P4", name: "产业派", group: "从业者", stance: "边界", stamp: "商" },
+    ];
+    function pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+
+    function makePost(topic, platformName){
+      const titlePool = [
+        `标题：${topic}，是“活化”还是“消解”？`,
+        `标题：围绕「${topic}」，我们到底在争什么？`,
+        `标题：${topic} 进入短视频时代，该怎么把握尺度？`,
+      ];
+      const bodyPool = [
+        `正文：当传统技艺被短视频与AIGC重新编排，受众的认同与抵触会如何分化？欢迎从“传承价值、审美体验、商业边界”三条线索展开讨论。`,
+        `正文：同一个文化内容，在不同平台的受众会呈现不同的语言风格与反馈倾向。你更看重“真实”还是“传播”？`,
+        `正文：请结合自身观看场景与体验痛点，说说你希望看到怎样的呈现方式，以及你能接受的创新边界。`,
+      ];
+      return {
+        title: pick(titlePool),
+        content: pick(bodyPool),
+        meta: { platform: platformName, topic },
+      };
+    }
+
+    function makeUtterance(round, parent){
+      const a = pick(agents);
+      const templates = [
+        `我更担心的是“符号化消费”：为了流量把仪式和语境抽掉，最后只剩壳。`,
+        `只要抓住核心精神，形式可以更新。关键是让更多人愿意靠近并产生参与感。`,
+        `建议先把谱系与出处讲清楚。没有溯源，讨论很容易变成各说各话。`,
+        `我更在意体验：好看、好懂、能共情，才会愿意转发和推荐给朋友。`,
+        `商业不是原罪，但需要边界与透明：收益如何回流到传承体系？`,
+      ];
+      return {
+        id: `u_${round}_${Math.random().toString(16).slice(2)}`,
+        round,
+        agent: a,
+        text: pick(templates),
+        parent,
+        sentiment: Math.min(0.95, Math.max(0.08, 0.45 + (Math.random() * 0.28 - 0.12))),
+        likes: 2 + Math.floor(Math.random() * 28),
+        favs: Math.floor(Math.random() * 8),
+        shares: Math.floor(Math.random() * 5),
+      };
+    }
+
+    /** 渲染当前页（第 currentPage 帖）；推演进行中时，当前构建页用 state.buildingPage */
+    function renderPage(){
+      const total = state.rounds;
+      if (total === 0) return;
+      const idx = Math.max(0, Math.min(state.currentPage - 1, total - 1));
+      state.currentPage = idx + 1;
+      let page = state.pages[idx];
+      if (!page && state.isRunning && state.round === state.currentPage) {
+        page = state.buildingPage;
+      }
+      if (!page) return;
+
+      postTitle.textContent = page.post.title;
+      postContent.textContent = page.post.content;
+      postTopicChip.innerText = page.post.meta.topic;
+      renderPostActions(state.platform);
+      const actions = PLATFORM_POST_ACTIONS[state.platform] || PLATFORM_POST_ACTIONS.tieba;
+      actions.forEach(a => {
+        const el = document.getElementById('post-' + a.key);
+        if (el) el.textContent = String(page.actions[a.key] ?? 0);
+      });
+
+      thread.innerHTML = '';
+      (page.replies || []).forEach(u => thread.appendChild(renderUtterCard(u)));
+
+      if (pageInfo) pageInfo.textContent = `第 ${state.currentPage} 帖 / 共 ${total} 帖`;
+      if (btnPagePrev) btnPagePrev.disabled = state.currentPage <= 1;
+      const maxPage = state.isRunning ? state.round : state.pages.length;
+      if (btnPageNext) btnPageNext.disabled = state.currentPage >= maxPage;
+      if (pageNav) pageNav.classList.remove('hidden');
+      setTimeout(() => { scrollToBottom(true); updateToBottomButton(); }, 0);
+    }
+
+    function renderUtterCard(u){
+      const card = document.createElement('div');
+      card.className = 'utter-card ink-in';
+
+      const quoteHtml = u.parent
+        ? `<div class="quote"><span class="title-font" style="color: rgba(44,62,80,0.8)">引用：</span>${escapeHtml(u.parent.text.slice(0, 80))}${u.parent.text.length > 80 ? '…' : ''}</div>`
+        : '';
+
+      card.innerHTML = `
+        <div class="agent-avatar">
+          <div class="sigil">${escapeHtml(u.agent.id)}</div>
+          <div class="stamp">${escapeHtml(u.agent.stamp)}</div>
+        </div>
+        <div>
+          <div class="utter-head">
+            <div class="agent-name">
+              ${escapeHtml(u.agent.name)}
+              <span class="tag">${escapeHtml(u.agent.group)}</span>
+              <span class="tag">立场：${escapeHtml(u.agent.stance)}</span>
+            </div>
+            <div class="utter-meta">帖子 ${u.round}</div>
+          </div>
+          <div class="utter-text">${escapeHtml(u.text)}</div>
+          ${quoteHtml}
+          <div class="utter-actions">
+            <span><i class="far fa-thumbs-up"></i> <span class="count">${u.likes ?? 0}</span></span>
+            <span><i class="far fa-bookmark"></i> <span class="count">${u.favs ?? 0}</span></span>
+            <span><i class="fas fa-share"></i> <span class="count">${u.shares ?? 0}</span></span>
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#39;");
+    }
+
+    function isNearBottom(el){
+      const remaining = el.scrollHeight - el.scrollTop - el.clientHeight;
+      return remaining < 80;
+    }
+
+    function updateToBottomButton(){
+      if (!btnToBottomWrap || !scrollBodyEl) return;
+      const near = isNearBottom(scrollBodyEl);
+      btnToBottomWrap.style.display = near ? 'none' : 'block';
+    }
+
+    function scrollToBottom(force=false){
+      if (!scrollBodyEl) return;
+      scrollBodyEl.scrollTop = scrollBodyEl.scrollHeight;
+    }
+
+    // 卷轴滚动：你手动滚上去后不会被打断
+    if (scrollBodyEl){
+      scrollBodyEl.addEventListener('scroll', () => {
+        updateToBottomButton();
+      }, { passive: true });
+      scrollBodyEl.addEventListener('wheel', () => {
+        updateToBottomButton();
+      }, { passive: true });
+    }
+
+    if (btnToBottom){
+      btnToBottom.addEventListener('click', () => {
+        scrollToBottom(true);
+        updateToBottomButton();
+      });
+    }
+
+    function setControlsEnabled(enabled){
+      ctrlTopic.disabled = !enabled;
+      ctrlModel.disabled = !enabled;
+      ctrlRounds.disabled = !enabled;
+    }
+
+    let cancelRequested = false;
+    function requestCancel(){
+      if (!state.isRunning) return;
+      cancelRequested = true;
+      btnStop.disabled = true;
+      btnStop.innerHTML = '<i class="fas fa-hourglass-half mr-2"></i>正在收笔...';
+      postStatusChip.style.color = 'var(--seal-red)';
+      postStatusChip.textContent = '终止中';
+      if (hintDividerText) hintDividerText.textContent = '收笔 · 即刻停卷';
+    }
+
+    btnStop.addEventListener('click', () => requestCancel());
+
+    if (btnPagePrev) btnPagePrev.addEventListener('click', () => {
+      if (state.currentPage > 1) { state.userHasNavigated = true; state.currentPage--; renderPage(); }
+    });
+    if (btnPageNext) btnPageNext.addEventListener('click', () => {
+      const maxPage = state.isRunning ? state.round : state.pages.length;
+      if (state.currentPage < maxPage) { state.userHasNavigated = true; state.currentPage++; renderPage(); }
+    });
+
+    // ============================================================
+    // 按钮：开卷推演（先用假数据跑动效与结构）
+    // ============================================================
+    btnStart.addEventListener('click', async () => {
+      if (!state.topic.trim()) return alert("请先赐拟推演话题");
+      if (state.isRunning) return;
+
+      cancelRequested = false;
+      state.isRunning = true;
+      state.round = 0;
+      btnStart.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>引擎衍算中...';
+      btnStart.style.opacity = '0.7';
+      btnStart.disabled = true;
+      btnStop.disabled = false;
+      btnStop.innerHTML = '<i class="fas fa-hand mr-2"></i>终止推演';
+      setControlsEnabled(false);
+
+      // 重置：每帖一页，翻页查看
+      state.pages = [];
+      state.currentPage = 1;
+      state.userHasNavigated = false;
+      thread.innerHTML = '';
+      if (pageNav) pageNav.classList.add('hidden');
+      const actions = PLATFORM_POST_ACTIONS[state.platform] || PLATFORM_POST_ACTIONS.tieba;
+      if (hintDividerText) hintDividerText.textContent = '开卷 · 落墨始';
+      postStatusChip.style.color = 'var(--theme-color)';
+      postStatusChip.textContent = '演算进行中';
+      postTopicChip.innerText = state.topic;
+      const simEl = document.getElementById('metric-sim');
+      const barSim = document.getElementById('bar-sim');
+      const styleEl = document.getElementById('metric-style');
+      const barStyle = document.getElementById('bar-style');
+      if (simEl) simEl.innerText = '0.00';
+      if (barSim) barSim.style.width = '0%';
+      if (styleEl) styleEl.innerText = '0.0%';
+      if (barStyle) barStyle.style.width = '0%';
+
+      let currentSim = 0.15;
+      let currentStyle = 12.0;
+
+      for (let i = 1; i <= state.rounds; i++) {
+        if (cancelRequested) break;
+        state.round = i;
+
+        // 每帖一页：未手动翻页则自动跟随新帖；手动翻页后则不自动切换
+        const p = makePost(state.topic, state.platformName);
+        if (i === 1) state.currentPage = 1;
+        if (!state.userHasNavigated) state.currentPage = i;
+        if (state.currentPage === i) {
+          postTitle.textContent = p.title;
+          postContent.textContent = p.content;
+          postTopicChip.innerText = p.meta.topic;
+          renderPostActions(state.platform);
+          actions.forEach(a => {
+            const el = document.getElementById('post-' + a.key);
+            if (el) el.textContent = '0';
+          });
+          thread.innerHTML = '';
+          setTimeout(() => { scrollToBottom(true); updateToBottomButton(); }, 0);
+        }
+        if (pageInfo) pageInfo.textContent = `第 ${state.currentPage} 帖 / 共 ${state.rounds} 帖`;
+        if (pageNav) pageNav.classList.remove('hidden');
+        if (btnPagePrev) btnPagePrev.disabled = state.currentPage <= 1;
+        if (btnPageNext) btnPageNext.disabled = state.currentPage >= state.round;
+
+        const base = { likes: 12, agrees: 10, replies: 8, comments: 6, shares: 4, favs: 2, coins: 3 };
+        const pageActions = {};
+        actions.forEach(a => { pageActions[a.key] = 0; });
+        state.buildingPage = { post: p, replies: [], actions: { ...pageActions } };
+
+        // 每帖下的回复条数由后端概率决定，此处暂用 2~4 条模拟
+        const utterCount = 2 + Math.floor(Math.random() * 3);
+        const pageReplies = [];
+        let lastUtter = null;
+        for (let k = 0; k < utterCount; k++) {
+          if (cancelRequested) break;
+          const parent = (lastUtter && Math.random() < 0.55) ? lastUtter : null;
+          const u = makeUtterance(i, parent);
+          pageReplies.push(u);
+          state.buildingPage.replies = [...pageReplies];
+          if (state.currentPage === i) thread.appendChild(renderUtterCard(u));
+          lastUtter = u;
+
+          currentSim = Math.min(0.96, Math.max(0.1, currentSim + (Math.random() * 0.08 + 0.02)));
+          currentStyle = Math.min(95, currentStyle + ((95 - currentStyle) / Math.max(1, state.rounds)) * (0.5 + Math.random()*0.5));
+          const _simEl = document.getElementById('metric-sim');
+          const _barSim = document.getElementById('bar-sim');
+          const _styleEl = document.getElementById('metric-style');
+          const _barStyle = document.getElementById('bar-style');
+          if (_simEl) _simEl.innerText = currentSim.toFixed(2);
+          if (_barSim) _barSim.style.width = `${currentSim * 100}%`;
+          if (_styleEl) _styleEl.innerText = currentStyle.toFixed(1) + '%';
+          if (_barStyle) _barStyle.style.width = `${currentStyle}%`;
+
+          actions.forEach(a => {
+            const b = base[a.key] || 5;
+            const cap = ['coins','favs','replies','comments','shares'].includes(a.key) ? 99 : 999;
+            pageActions[a.key] = Math.min(cap, Math.floor(b + (k + 1) * 6 + Math.random() * 4));
+          });
+          state.buildingPage.actions = { ...pageActions };
+          actions.forEach(a => {
+            if (state.currentPage === i) {
+              const el = document.getElementById('post-' + a.key);
+              if (el) el.textContent = pageActions[a.key];
+            }
+          });
+
+          if (state.currentPage === i && scrollBodyEl && isNearBottom(scrollBodyEl)) scrollToBottom(true);
+          updateToBottomButton();
+          await new Promise(r => setTimeout(r, 320 + Math.random() * 520));
+        }
+
+        state.pages.push({ post: p, replies: pageReplies, actions: pageActions });
+      }
+
+      state.currentPage = state.pages.length > 0 ? 1 : 0;
+      if (state.pages.length > 0) renderPage();
+
+      state.isRunning = false;
+      btnStart.disabled = false;
+      btnStart.style.opacity = '1';
+      btnStop.disabled = true;
+      setControlsEnabled(true);
+
+      if (cancelRequested){
+        btnStart.innerHTML = '<i class="fas fa-play mr-2"></i>重新开启推演';
+        if (hintDividerText) hintDividerText.textContent = '已终止 · 墨迹未竟';
+        postStatusChip.style.color = 'var(--seal-red)';
+        postStatusChip.textContent = '已终止';
+        updateReportArea(null);
+      } else {
+        btnStart.innerHTML = '<i class="fas fa-play mr-2"></i>重新开启推演';
+        if (hintDividerText) hintDividerText.textContent = '收卷 · 归档成章';
+        postStatusChip.style.color = 'var(--ink-light)';
+        postStatusChip.textContent = '演算已达成';
+        updateReportArea({ sim: currentSim, style: currentStyle, topic: state.topic, platform: state.platformName });
+      }
+      updateToBottomButton();
+    });
+
+    // 推演建议报告区
+    let lastReportData = null;
+    function updateReportArea(data){
+      const placeholder = document.getElementById('report-placeholder');
+      const content = document.getElementById('report-content');
+      if (!placeholder || !content) return;
+      if (!data) {
+        lastReportData = null;
+        placeholder.classList.remove('hidden');
+        content.classList.add('hidden');
+        content.innerHTML = '';
+        return;
+      }
+      lastReportData = data;
+      const suggestions = [
+        `针对「${data.topic}」在${data.platform}的讨论，建议优先关注传承价值与商业边界的平衡，避免符号化消费。`,
+        `当前模拟评论与真实评论语义相似度约 ${(data.sim * 100).toFixed(0)}%，风格一致性 ${data.style.toFixed(1)}%，可考虑在内容呈现上适度强化平台特色表达。`,
+        `建议在后续运营中保持话题的持续发酵与多轮引导，注重守正与创新并重。`,
+        `综合多智能体立场：溯源与体验兼顾，商业收益需透明回流传承体系；避免为流量而抽离仪式与语境。`,
+      ];
+      content.innerHTML = '<p class="mb-2 font-bold title-font" style="color: var(--ink-main);">策略建议：</p>' +
+        suggestions.map(s => `<p class="mb-2">· ${s}</p>`).join('');
+      placeholder.classList.add('hidden');
+      content.classList.remove('hidden');
+    }
+
+    // 报告点击放大（无论有无内容都可点击）
+    const reportArea = document.getElementById('report-area');
+    const reportModalOverlay = document.getElementById('report-modal-overlay');
+    const reportModalBody = document.getElementById('report-modal-body');
+    const reportModalClose = document.getElementById('report-modal-close');
+    if (reportArea) {
+      reportArea.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const content = document.getElementById('report-content');
+        const placeholder = document.getElementById('report-placeholder');
+        let html = '';
+        if (content && !content.classList.contains('hidden') && content.innerHTML.trim()) {
+          html = content.innerHTML;
+        } else if (placeholder) {
+          html = '<p>' + placeholder.textContent + '</p>';
+        }
+        if (reportModalBody && reportModalOverlay) {
+          reportModalBody.innerHTML = html || '<p style="color:var(--ink-light);">暂无内容</p>';
+          reportModalOverlay.classList.add('active');
+        }
+      });
+    }
+    function closeReportModal(){ reportModalOverlay?.classList.remove('active'); }
+    if (reportModalClose) reportModalClose.addEventListener('click', closeReportModal);
+    if (reportModalOverlay) reportModalOverlay.addEventListener('click', (e) => { if (e.target === reportModalOverlay) closeReportModal(); });
+
+    // 下载报告（假实现）
+    const btnDownloadReport = document.getElementById('btn-download-report');
+    if (btnDownloadReport) {
+      btnDownloadReport.addEventListener('click', () => {
+        const content = document.getElementById('report-content');
+        const hasContent = content && !content.classList.contains('hidden') && content.innerHTML.trim();
+        if (hasContent) {
+          const blob = new Blob(['推演建议报告\n\n' + (content.innerText || '暂无内容')], { type: 'text/plain;charset=utf-8' });
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = `推演建议_${state.topic.slice(0,20)}_${new Date().toISOString().slice(0,10)}.txt`;
+          a.click();
+          URL.revokeObjectURL(a.href);
+        } else {
+          alert('推演完成后可下载报告');
+        }
+      });
+    }
+
+    // ============================================================
+    // 水墨背景：轻量 Canvas “墨云/晕染” (动态但克制)
+    // ============================================================
+    const canvas = document.getElementById('ink-canvas');
+    const ctx = canvas.getContext('2d', { alpha: true });
+    let w = 0, h = 0;
+
+    function resizeCanvas(){
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      w = Math.floor(window.innerWidth * dpr);
+      h = Math.floor(window.innerHeight * dpr);
+      canvas.width = w;
+      canvas.height = h;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.setTransform(1,0,0,1,0,0);
+      ctx.scale(dpr, dpr);
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const inkBlobs = [];
+    function rand(min, max){ return min + Math.random() * (max - min); }
+
+    function spawnBlob(force=false){
+      if (!force && inkBlobs.length > 36) return;
+      const theme = getComputedStyle(document.documentElement).getPropertyValue('--theme-color').trim() || '#16819c';
+      inkBlobs.push({
+        x: rand(80, window.innerWidth - 80),
+        y: rand(80, window.innerHeight - 80),
+        r: rand(120, 280),
+        a: rand(0.04, 0.09),
+        vx: rand(-0.06, 0.06),
+        vy: rand(-0.04, 0.04),
+        life: rand(5000, 9500),
+        born: performance.now(),
+        tint: theme,
+      });
+    }
+
+    for (let i=0;i<20;i++) spawnBlob(true);
+    let lastSpawn = 0;
+
+    function draw(){
+      const now = performance.now();
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      // 纸面纤维噪点（略加强）
+      ctx.save();
+      ctx.globalAlpha = 0.06;
+      for (let i=0;i<50;i++){
+        const x = (i*97 + (now*0.02)) % window.innerWidth;
+        const y = (i*131 + (now*0.015)) % window.innerHeight;
+        ctx.fillStyle = 'rgba(26,38,52,0.15)';
+        ctx.fillRect(x, y, 1, 1);
+      }
+      ctx.restore();
+
+      // 墨云（更强晕染）
+      for (let i = inkBlobs.length - 1; i >= 0; i--){
+        const b = inkBlobs[i];
+        const t = (now - b.born) / b.life;
+        if (t >= 1){
+          inkBlobs.splice(i, 1);
+          continue;
+        }
+        b.x += b.vx;
+        b.y += b.vy;
+
+        const alpha = b.a * (1 - t);
+        const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
+        grad.addColorStop(0, `rgba(26,38,52,${alpha})`);
+        grad.addColorStop(0.4, `rgba(26,38,52,${alpha * 0.6})`);
+        grad.addColorStop(1, `rgba(26,38,52,0)`);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 主题色“气脉”（更强）
+        const glow = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r * 0.9);
+        glow.addColorStop(0, hexToRgba(b.tint, alpha * 0.45));
+        glow.addColorStop(0.5, hexToRgba(b.tint, alpha * 0.15));
+        glow.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(b.x + 22, b.y - 12, b.r * 0.95, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (now - lastSpawn > 650){
+        lastSpawn = now;
+        spawnBlob(false);
+      }
+
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+
+    function hexToRgba(hex, a){
+      const h = hex.replace('#','').trim();
+      if (h.length === 3){
+        const r = parseInt(h[0]+h[0], 16);
+        const g = parseInt(h[1]+h[1], 16);
+        const b = parseInt(h[2]+h[2], 16);
+        return `rgba(${r},${g},${b},${a})`;
+      }
+      const r = parseInt(h.slice(0,2), 16);
+      const g = parseInt(h.slice(2,4), 16);
+      const b = parseInt(h.slice(4,6), 16);
+      return `rgba(${r},${g},${b},${a})`;
+    }
+
+    // ============================================================
+    // 图表（国风：墨色 + 平台主题色，随平台切换统一更新）
+    // ============================================================
+    let chartsObj = {};
+
+    function hexLighten(hex, pct) {
+      const h = (hex || '#16819c').replace('#','').trim();
+      let r, g, b;
+      if (h.length === 3) { r=parseInt(h[0]+h[0],16); g=parseInt(h[1]+h[1],16); b=parseInt(h[2]+h[2],16); }
+      else { r=parseInt(h.slice(0,2),16); g=parseInt(h.slice(2,4),16); b=parseInt(h.slice(4,6),16); }
+      r = Math.min(255, Math.round(r + (255-r)*pct));
+      g = Math.min(255, Math.round(g + (255-g)*pct));
+      b = Math.min(255, Math.round(b + (255-b)*pct));
+      return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+    }
+
+    function renderCharts() {
+      const isDark = document.body.classList.contains('dark-mode');
+      const chartInk = isDark ? '#e5e7eb' : '#1f2937';
+      const textColor = isDark ? '#e5e7eb' : '#374151';
+      const chartAxisColor = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(15,23,42,0.18)';
+      const tooltipBase = { confine: true, backgroundColor: isDark ? 'rgba(31,41,55,0.98)' : 'rgba(255,255,255,0.98)', borderColor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(15,23,42,0.1)', borderWidth: 1, textStyle: { color: textColor, fontFamily: 'Noto Sans SC' } };
+      const heatmapLow = isDark ? '#374151' : '#f1f5f9';
+
+      const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--theme-color').trim() || '#16819c';
+      const primaryLight = hexLighten(primaryColor, 0.35);
+      const axisLineColor = chartAxisColor;
+
+      if (document.getElementById('chart-rf')?.offsetParent !== null) {
+        const bambooData = [
+          { label: '语义分析', val: 82 },
+          { label: '风格', val: 48 },
+          { label: '观点', val: 25 },
+          { label: '复杂度', val: 12 },
+          { label: '行为', val: 7 }
+        ];
+        const bambooHtml = bambooData.map((d, i) => `
+          <div class="bamboo-strip">
+            <span class="bamboo-label">${d.label}</span>
+            <div class="bamboo-track">
+              <div class="bamboo-fill" style="--bamboo-w: ${d.val}%"></div>
+            </div>
+            <span class="bamboo-val">${d.val}%</span>
+          </div>
+        `).join('');
+        document.getElementById('chart-rf').innerHTML = bambooHtml;
+      }
+      if (document.getElementById('chart-radar')?.offsetParent !== null) {
+        if (!chartsObj.radar) chartsObj.radar = echarts.init(document.getElementById('chart-radar'));
+        const radarData = [
+          { name: '极化程度', value: 80 },
+          { name: '互动深度', value: 45 },
+          { name: '裂变率', value: 90 },
+          { name: '情绪强度', value: 85 },
+          { name: '商业转化', value: 30 }
+        ];
+        chartsObj.radar.setOption({
+          animation: true,
+          animationDuration: 1000,
+          animationDelay: 200,
+          animationEasing: 'cubicOut',
+          tooltip: { ...tooltipBase, formatter: '{b}: {c}' },
+          grid: { left: '8%', right: '10%', bottom: '8%', top: '8%', containLabel: true },
+          xAxis: { type: 'category', data: radarData.map(d => d.name), axisLine: { lineStyle: { color: axisLineColor } }, axisLabel: { color: textColor, fontFamily: 'Noto Sans SC', fontSize: 12 } },
+          yAxis: { type: 'value', min: 0, max: 100, splitLine: { lineStyle: { color: axisLineColor, type: 'dashed' } }, axisLabel: { color: textColor, fontFamily: 'Noto Sans SC' } },
+          series: [{
+            type: 'bar',
+            data: radarData.map(d => d.value),
+            barWidth: 18,
+            itemStyle: {
+              color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: primaryColor }, { offset: 1, color: primaryLight }] },
+              borderRadius: [6, 6, 0, 0]
+            },
+            label: { show: true, position: 'top', color: textColor, fontFamily: 'Noto Sans SC', formatter: '{c}' },
+            emphasis: { itemStyle: { borderColor: chartInk, borderWidth: 1.5 } }
+          }]
+        });
+      }
+
+      if (document.getElementById('chart-heat')?.offsetParent !== null) {
+        if (!chartsObj.heat) chartsObj.heat = echarts.init(document.getElementById('chart-heat'));
+        const heatX = ['古琴', '汉服', '非遗', '国风舞', '水墨动画', '茶道'];
+        const heatY = ['原教旨', '先锋派', '考据党', '大众'];
+        const hData = [
+          [0,0,0.85],[0,1,0.32],[0,2,0.58],[0,3,0.72],
+          [1,0,0.22],[1,1,0.68],[1,2,0.45],[1,3,0.88],
+          [2,0,0.55],[2,1,0.41],[2,2,0.78],[2,3,0.63],
+          [3,0,0.38],[3,1,0.62],[3,2,0.51],[3,3,0.76],
+          [4,0,0.72],[4,1,0.28],[4,2,0.65],[4,3,0.44],
+          [5,0,0.48],[5,1,0.55],[5,2,0.39],[5,3,0.81]
+        ];
+        chartsObj.heat.setOption({
+          animation: true,
+          animationDuration: 800,
+          animationDelay: (idx) => idx * 60,
+          animationEasing: 'cubicOut',
+          tooltip: { ...tooltipBase, formatter: (p) => `${heatY[p.data[1]]} × ${heatX[p.data[0]]}: ${(p.data[2] * 100).toFixed(0)}%` },
+          grid: { left: '10%', right: '6%', bottom: '18%', top: '10%' },
+          xAxis: { type: 'category', data: heatX, axisLine: { show: false }, axisLabel: { color: textColor, fontSize: 11, fontFamily: 'Noto Sans SC' } },
+          yAxis: { type: 'category', data: heatY, axisLine: { show: false }, axisLabel: { color: textColor, fontSize: 11, fontFamily: 'Noto Sans SC' } },
+          visualMap: { show: true, min: 0, max: 1, orient: 'horizontal', left: 'center', bottom: '2%', textStyle: { color: textColor, fontFamily: 'Noto Sans SC', fontSize: 11 }, inRange: { color: [heatmapLow, hexToRgba(primaryColor, 0.5), primaryColor] } },
+          series: [{ type: 'heatmap', data: hData, itemStyle: { borderColor: 'rgba(255,255,255,0.8)', borderWidth: 1, borderRadius: 6 }, label: { show: true, color: chartInk, fontSize: 11, fontFamily: 'Noto Sans SC', formatter: (p) => (p.data[2] * 100).toFixed(0) + '%' } }]
+        });
+      }
+
+      if (document.getElementById('chart-val1')?.offsetParent !== null) {
+        if (!chartsObj.val1) chartsObj.val1 = echarts.init(document.getElementById('chart-val1'));
+        chartsObj.val1.setOption({
+          animation: true,
+          animationDuration: 1000,
+          animationDelay: 300,
+          animationEasing: 'cubicOut',
+          tooltip: { ...tooltipBase, trigger: 'item' },
+          grid: { left: '10%', right: '8%', bottom: '12%', top: '10%' },
+          xAxis: { name: '真实域', min: 0, max: 1, splitLine: { lineStyle: { color: axisLineColor, type: 'dashed' } }, axisLabel: { color: textColor, fontFamily: 'Noto Sans SC' }, nameTextStyle: { color: textColor, fontFamily: 'Noto Sans SC' } },
+          yAxis: { name: '推演域', min: 0, max: 1, splitLine: { lineStyle: { color: axisLineColor, type: 'dashed' } }, axisLabel: { color: textColor, fontFamily: 'Noto Sans SC' }, nameTextStyle: { color: textColor, fontFamily: 'Noto Sans SC' } },
+          series: [
+            { name: '内测集', type: 'scatter', symbol: 'circle', symbolSize: 11, itemStyle: { color: primaryColor, opacity: 0.9, borderColor: chartInk, borderWidth: 1.5 }, emphasis: { scale: 1.2 }, data: [[0.2, 0.22], [0.35, 0.31], [0.5, 0.55], [0.65, 0.61], [0.8, 0.78], [0.15, 0.18], [0.9, 0.85]] },
+            { type: 'line', data: [[0, 0], [1, 1]], symbol: 'none', lineStyle: { type: 'dashed', color: chartAxisColor, width: 1.5 } }
+          ]
+        });
+      }
+
+      if (document.getElementById('chart-val2')?.offsetParent !== null) {
+        if (!chartsObj.val2) chartsObj.val2 = echarts.init(document.getElementById('chart-val2'));
+        chartsObj.val2.setOption({
+          animation: true,
+          animationDuration: 1000,
+          animationDelay: 450,
+          animationEasing: 'cubicOut',
+          tooltip: { ...tooltipBase, trigger: 'item' },
+          grid: { left: '10%', right: '8%', bottom: '12%', top: '10%' },
+          xAxis: { name: '真实域', min: 0, max: 1, splitLine: { lineStyle: { color: axisLineColor, type: 'dashed' } }, axisLabel: { color: textColor, fontFamily: 'Noto Sans SC' }, nameTextStyle: { color: textColor, fontFamily: 'Noto Sans SC' } },
+          yAxis: { name: '推演域', min: 0, max: 1, splitLine: { lineStyle: { color: axisLineColor, type: 'dashed' } }, axisLabel: { color: textColor, fontFamily: 'Noto Sans SC' }, nameTextStyle: { color: textColor, fontFamily: 'Noto Sans SC' } },
+          series: [
+            { name: '盲测集', type: 'effectScatter', symbol: 'diamond', symbolSize: 13, rippleEffect: { brushType: 'stroke', scale: 2.5, color: primaryColor }, itemStyle: { color: primaryColor, opacity: 0.92, borderColor: chartInk, borderWidth: 1.5 }, data: [[0.25, 0.3], [0.4, 0.35], [0.6, 0.68], [0.75, 0.65], [0.85, 0.9]] },
+            { type: 'line', data: [[0, 0], [1, 1]], symbol: 'none', lineStyle: { type: 'dashed', color: chartAxisColor, width: 1.5 } }
+          ]
+        });
+      }
+    }
+
+    window.addEventListener('resize', () => Object.values(chartsObj).forEach(c => c.resize()));
+
+    // ============================================================
+    // 18 块滚轮切换：由滚动驱动模块/平台切换 + 主题色
+    // ============================================================
+    const scrollCanvas = document.getElementById('scroll-canvas');
+    const contentViewport = document.getElementById('content-viewport');
+    const stageWrap = document.getElementById('stage-wrap');
+    const sections = document.querySelectorAll('.canvas-section');
+    const PLATFORMS = ['tieba','weibo','zhihu','xiaohongshu','douyin','bilibili'];
+    const MODULES = ['simulation','agents','analytics'];
+    const PLATFORM_NAMES = { tieba:'贴吧', weibo:'微博', zhihu:'知乎', xiaohongshu:'小红书', douyin:'抖音', bilibili:'B站' };
+    const PLATFORM_COLORS = { tieba:'#3385ff', weibo:'#e6162d', zhihu:'#0084ff', xiaohongshu:'#ff2442', douyin:'#8b5cf6', bilibili:'#fb7299' };
+
+    function applyTheme(platform) {
+      const hex = PLATFORM_COLORS[platform] || PLATFORM_COLORS.tieba;
+      document.documentElement.style.setProperty('--theme-color', hex);
+      const c = hex.substring(1).split('');
+      let r,g,b; 
+      if (c.length===3) { r=parseInt(c[0]+c[0],16); g=parseInt(c[1]+c[1],16); b=parseInt(c[2]+c[2],16); }
+      else { r=parseInt(c[0]+c[1],16); g=parseInt(c[2]+c[3],16); b=parseInt(c[4]+c[5],16); }
+      document.documentElement.style.setProperty('--theme-glow', `rgba(${r},${g},${b},0.22)`);
+      const dr=Math.round(r*0.75), dg=Math.round(g*0.75), db=Math.round(b*0.75);
+      document.documentElement.style.setProperty('--theme-color-dark', `rgb(${dr},${dg},${db})`);
+    }
+
+    function syncUIFromSection(idx) {
+      const sec = sections[idx];
+      if (!sec) return;
+      const platform = sec.dataset.platform;
+      const module = sec.dataset.module;
+      state.platform = platform;
+      state.platformName = PLATFORM_NAMES[platform] || platform;
+      applyTheme(platform);
+      document.getElementById('platform-name').innerText = `${state.platformName}矩阵`;
+      scrollPlatform.innerHTML = `<i class="fas fa-feather-alt"></i> ${state.platformName}`;
+      platformBtns.forEach(b => {
+        b.classList.toggle('active-platform', b.dataset.platform === platform);
+      });
+      sidebarItems.forEach(i => {
+        i.classList.toggle('active', i.dataset.module === module);
+      });
+      Object.values(modules).forEach(m => m && m.classList.remove('active'));
+      const target = modules[module];
+      if (target) target.classList.add('active');
+      if (module === 'simulation') {
+        document.body.classList.remove('mode-full');
+        if (stageWrap) stageWrap.style.display = '';
+      } else {
+        document.body.classList.add('mode-full');
+        if (stageWrap) stageWrap.style.display = 'none';
+      }
+      renderPostActions(platform);
+      setTimeout(() => renderCharts(), 80);
+    }
+
+    const sidebarItems = document.querySelectorAll('.sidebar-icon[data-module]');
+    const modules = {
+      simulation: document.getElementById('module-simulation'),
+      agents: document.getElementById('module-agents'),
+      analytics: document.getElementById('module-analytics')
+    };
+
+    const obs = new IntersectionObserver(entries => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          const idx = parseInt(e.target.dataset.idx, 10);
+          if (!isNaN(idx)) syncUIFromSection(idx);
+          break;
+        }
+      }
+    }, { root: scrollCanvas, rootMargin: '-40% 0px', threshold: 0 });
+    sections.forEach(s => obs.observe(s));
+    syncUIFromSection(0);
+
+    contentViewport?.addEventListener('wheel', (e) => {
+      scrollCanvas.scrollTop += e.deltaY;
+      e.preventDefault();
+    }, { passive: false });
+
+    function scrollToSection(idx) {
+      const sec = sections[idx];
+      if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    sidebarItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const mod = item.dataset.module;
+        const idx = PLATFORMS.indexOf(state.platform) * 3 + MODULES.indexOf(mod);
+        scrollToSection(Math.max(0, idx));
+      });
+    });
+
+    platformBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const plat = btn.dataset.platform;
+        const idx = PLATFORMS.indexOf(plat) * 3;
+        scrollToSection(idx);
+      });
+    });
+
+    // 受众图鉴（符号化，约 10 个智能体，含经典发言）
+    const agentsData = [
+      { name: '守成派', ratio: '12.1%', desc: '排斥过度解构，守旧如玉。注重形制考据与历史还原，对魔改极其反感。', quote: '形制错了，再好看也是魔改。', tags: ['形制考据', '传统审美'] },
+      { name: '破壁派', ratio: '11.5%', desc: '推崇万物交融的现代理念。喜欢赛博朋克、电音等亚文化与国风的融合碰撞。', quote: '国风不该是博物馆里的标本，要敢和当代碰撞。', tags: ['跨界融合', '降维打击'] },
+      { name: '考据派', ratio: '7.2%', desc: '执着于出土形制与古籍文献。平时潜水，一旦遇到学术谬误会写长文反驳。', quote: '先查《舆服志》再说话，别张口就来。', tags: ['引经据典', '硬核科普'] },
+      { name: '岭南传颂', ratio: '9.8%', desc: '致力本土非物质文化布道。具有强烈的地域文化认同感与保护意识。', quote: '我们这的工夫茶、醒狮，才是活着的非遗。', tags: ['非遗传承', '地域骄傲'] },
+      { name: '狂热拥趸', ratio: '14.3%', desc: '以狂热排面看待文化符号。倾向于饭圈化的表达，为国风打榜做数据。', quote: '绝美！排面！这波必须冲！', tags: ['情绪输出', '绝美排面'] },
+      { name: '普罗大众', ratio: '18.6%', desc: '随波逐流的普通看客。不深究内核，只看视频是否有意思、好不好看。', quote: '好看就行，别整那么复杂。', tags: ['吃瓜前排', '求购周边'] },
+      { name: '观望派', ratio: '8.4%', desc: '对国风话题持中立态度，不轻易站队。会围观讨论，偶尔发表谨慎看法。', quote: '先看看大家怎么说，我再想想。', tags: ['理性围观', '谨慎发言'] },
+      { name: '产业派', ratio: '6.7%', desc: '从商业与产业链视角看待国风。关注变现路径、IP 开发与市场边界。', quote: '情怀要讲，但商业闭环也得跑通。', tags: ['商业转化', 'IP 开发'] },
+      { name: '乐活派', ratio: '7.1%', desc: '把国风当生活调剂，喜欢轻松有趣的内容。不较真，图一乐。', quote: '穿汉服吃火锅，快乐就完事了。', tags: ['轻松娱乐', '生活向'] },
+      { name: '创变派', ratio: '4.3%', desc: '主张在尊重内核的前提下大胆创新。支持实验性表达与年轻化叙事。', quote: '传统是根，创新是枝，两者不矛盾。', tags: ['实验表达', '年轻叙事'] },
+    ];
+    document.getElementById('agentsGrid').innerHTML = agentsData.map((a, i) => `
+      <div class="agent-card">
+        <div class="flex justify-between items-center mb-2">
+          <span class="font-bold text-[16px] title-font" style="color:var(--ink-main);">${a.name}</span>
+          <span class="font-bold text-[15px] font-sans" style="color:var(--theme-color);">${a.ratio}</span>
+        </div>
+        <div class="text-[13px] leading-relaxed" style="color:var(--ink-light); flex:1;">${a.desc}</div>
+        ${a.quote ? `<div class="agent-quote mt-2 px-4 py-2 rounded text-[12px]" style="color:var(--ink-secondary); background:var(--bg-hover); border-left:3px solid var(--theme-color);">${a.quote}</div>` : ''}
+        <div class="mt-2 flex items-center justify-between flex-wrap gap-2">
+          <span class="flex gap-1">${a.tags.map(t => `<span class="agent-tag">${t}</span>`).join('')}</span>
+          <span class="agent-card-idx" style="font-size:10px;color:var(--ink-tertiary);">#${String(i+1).padStart(2,'0')}</span>
+        </div>
+      </div>
+    `).join('');
+
+    // 初次渲染图表
+    renderCharts();
+  </script>
+</body>
+</html>
+
+
