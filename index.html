@@ -721,12 +721,62 @@
     .flow-block .stage-wrap .scroll-body { height: calc(100% - 52px); min-height: 280px; }
 
     /* 每个块写死自己平台的颜色，滚到即显示，无切换逻辑 */
-    .flow-block[data-platform="tieba"] { --theme-color: var(--color-tieba); --theme-glow: rgba(51,133,255,0.22); --theme-color-dark: #2563eb; }
-    .flow-block[data-platform="weibo"] { --theme-color: var(--color-weibo); --theme-glow: rgba(230,22,45,0.22); --theme-color-dark: #ac1021; }
-    .flow-block[data-platform="zhihu"] { --theme-color: var(--color-zhihu); --theme-glow: rgba(0,132,255,0.22); --theme-color-dark: #0063bf; }
-    .flow-block[data-platform="xiaohongshu"] { --theme-color: var(--color-xhs); --theme-glow: rgba(255,36,66,0.22); --theme-color-dark: #bf1b31; }
-    .flow-block[data-platform="douyin"] { --theme-color: var(--color-douyin); --theme-glow: rgba(139,92,246,0.22); --theme-color-dark: #6845b8; }
-    .flow-block[data-platform="bilibili"] { --theme-color: var(--color-bilibili); --theme-glow: rgba(251,114,153,0.22); --theme-color-dark: #bc5572; }
+    /* 用显式 hex/rgba 覆盖，便于 htmltodesign 等插件正确导出多色设计稿到 Figma */
+    .flow-block[data-platform="tieba"] { --theme-color: #3385ff; --theme-glow: rgba(51,133,255,0.22); --theme-color-dark: #2563eb; }
+    .flow-block[data-platform="tieba"] .chart-panel .section-title { border-left-color: #3385ff; }
+    .flow-block[data-platform="tieba"] .section-icon-theme { color: #2563eb; }
+    .flow-block[data-platform="tieba"] .kpi-accent,
+    .flow-block[data-platform="tieba"] .agent-tag { color: #3385ff; background: rgba(51,133,255,0.15); }
+    .flow-block[data-platform="tieba"] #rounds-val,
+    .flow-block[data-platform="tieba"] .sync-rounds-val { color: #3385ff !important; }
+    .flow-block[data-platform="tieba"] #bar-sim,
+    .flow-block[data-platform="tieba"] .sync-bar-sim { background-color: #3385ff !important; }
+    .flow-block[data-platform="tieba"] .analytics-content .mb-6 span:first-child { color: #3385ff !important; }
+
+    .flow-block[data-platform="weibo"] { --theme-color: #e6162d; --theme-glow: rgba(230,22,45,0.22); --theme-color-dark: #ac1021; }
+    .flow-block[data-platform="weibo"] .section-icon-theme { color: #ac1021; }
+    .flow-block[data-platform="weibo"] .chart-panel .section-title { border-left-color: #e6162d; }
+    .flow-block[data-platform="weibo"] .kpi-accent,
+    .flow-block[data-platform="weibo"] .agent-tag { color: #e6162d; background: rgba(230,22,45,0.15); }
+    .flow-block[data-platform="weibo"] .sync-rounds-val { color: #e6162d !important; }
+    .flow-block[data-platform="weibo"] .sync-bar-sim { background-color: #e6162d !important; }
+    .flow-block[data-platform="weibo"] .analytics-content .mb-6 span:first-child { color: #e6162d !important; }
+
+    .flow-block[data-platform="zhihu"] { --theme-color: #0084ff; --theme-glow: rgba(0,132,255,0.22); --theme-color-dark: #0063bf; }
+    .flow-block[data-platform="zhihu"] .section-icon-theme { color: #0063bf; }
+    .flow-block[data-platform="zhihu"] .chart-panel .section-title { border-left-color: #0084ff; }
+    .flow-block[data-platform="zhihu"] .kpi-accent,
+    .flow-block[data-platform="zhihu"] .agent-tag { color: #0084ff; background: rgba(0,132,255,0.15); }
+    .flow-block[data-platform="zhihu"] .sync-rounds-val { color: #0084ff !important; }
+    .flow-block[data-platform="zhihu"] .sync-bar-sim { background-color: #0084ff !important; }
+    .flow-block[data-platform="zhihu"] .analytics-content .mb-6 span:first-child { color: #0084ff !important; }
+
+    .flow-block[data-platform="xiaohongshu"] { --theme-color: #ff2442; --theme-glow: rgba(255,36,66,0.22); --theme-color-dark: #bf1b31; }
+    .flow-block[data-platform="xiaohongshu"] .section-icon-theme { color: #bf1b31; }
+    .flow-block[data-platform="xiaohongshu"] .chart-panel .section-title { border-left-color: #ff2442; }
+    .flow-block[data-platform="xiaohongshu"] .kpi-accent,
+    .flow-block[data-platform="xiaohongshu"] .agent-tag { color: #ff2442; background: rgba(255,36,66,0.15); }
+    .flow-block[data-platform="xiaohongshu"] .sync-rounds-val { color: #ff2442 !important; }
+    .flow-block[data-platform="xiaohongshu"] .sync-bar-sim { background-color: #ff2442 !important; }
+    .flow-block[data-platform="xiaohongshu"] .analytics-content .mb-6 span:first-child { color: #ff2442 !important; }
+
+    .flow-block[data-platform="douyin"] { --theme-color: #8b5cf6; --theme-glow: rgba(139,92,246,0.22); --theme-color-dark: #6845b8; }
+    .flow-block[data-platform="douyin"] .section-icon-theme { color: #6845b8; }
+    .flow-block[data-platform="douyin"] .chart-panel .section-title { border-left-color: #8b5cf6; }
+    .flow-block[data-platform="douyin"] .kpi-accent,
+    .flow-block[data-platform="douyin"] .agent-tag { color: #8b5cf6; background: rgba(139,92,246,0.15); }
+    .flow-block[data-platform="douyin"] .sync-rounds-val { color: #8b5cf6 !important; }
+    .flow-block[data-platform="douyin"] .sync-bar-sim { background-color: #8b5cf6 !important; }
+    .flow-block[data-platform="douyin"] .analytics-content .mb-6 span:first-child { color: #8b5cf6 !important; }
+
+    .flow-block[data-platform="bilibili"] { --theme-color: #fb7299; --theme-glow: rgba(251,114,153,0.22); --theme-color-dark: #bc5572; }
+    .flow-block[data-platform="bilibili"] .section-icon-theme { color: #bc5572; }
+    .flow-block[data-platform="bilibili"] .chart-panel .section-title { border-left-color: #fb7299; }
+    .flow-block[data-platform="bilibili"] .kpi-accent,
+    .flow-block[data-platform="bilibili"] .agent-tag { color: #fb7299; background: rgba(251,114,153,0.15); }
+    .flow-block[data-platform="bilibili"] .sync-rounds-val { color: #fb7299 !important; }
+    .flow-block[data-platform="bilibili"] .sync-bar-sim { background-color: #fb7299 !important; }
+    .flow-block[data-platform="bilibili"] .analytics-content .mb-6 span:first-child { color: #fb7299 !important; }
 
     .chart-container { width: 100%; height: 100%; min-height: 250px; }
     .chart-box { width: 100%; height: 380px; }
