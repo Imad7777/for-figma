@@ -639,12 +639,17 @@
       bottom: 0;
       left: 56px;
       right: 0;
-      overflow-y: auto;
+      overflow-y: scroll;
       overflow-x: hidden;
       scroll-snap-type: y mandatory;
       -webkit-overflow-scrolling: touch;
-      z-index: 5;
+      z-index: 12;
+      scrollbar-width: thin;
+      /* 保证可被滚轮操作，且位于 content-viewport 透明区域下方 */
     }
+    .scroll-canvas::-webkit-scrollbar { width: 8px; }
+    .scroll-canvas::-webkit-scrollbar-track { background: transparent; }
+    .scroll-canvas::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 4px; }
     .canvas-section {
       min-height: 100vh;
       scroll-snap-align: start;
@@ -652,6 +657,7 @@
       position: relative;
       flex-shrink: 0;
     }
+    /* 主区滚轮穿透：content-viewport 不拦截，让滚轮到达下层 scroll-canvas */
     .content-viewport {
       position: fixed;
       top: 56px;
@@ -659,13 +665,16 @@
       left: 56px;
       right: 0;
       z-index: 15;
-      pointer-events: auto;
+      pointer-events: none;
       display: flex;
       justify-content: flex-end;
       align-items: stretch;
     }
+    .content-viewport > .stage-wrap,
     .content-viewport > .viewport-inner {
       pointer-events: auto;
+    }
+    .content-viewport > .viewport-inner {
       width: 100%;
       max-width: 438px;
       padding: 28px 32px;
@@ -2299,10 +2308,18 @@
     sections.forEach(s => obs.observe(s));
     syncUIFromSection(0);
 
-    contentViewport?.addEventListener('wheel', (e) => {
-      scrollCanvas.scrollTop += e.deltaY;
-      e.preventDefault();
-    }, { passive: false });
+    (function initWheelScroll(){
+      const el = document.getElementById('scroll-canvas');
+      if (!el) return;
+      const maxScroll = () => Math.max(0, el.scrollHeight - el.clientHeight);
+      function onWheel(e) {
+        const next = el.scrollTop + e.deltaY;
+        el.scrollTop = Math.max(0, Math.min(maxScroll(), next));
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      document.addEventListener('wheel', onWheel, { passive: false, capture: true });
+    })();
 
     function scrollToSection(idx) {
       const sec = sections[idx];
